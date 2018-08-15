@@ -2,6 +2,7 @@ const request = require('request')
 const cheerio = require('cheerio')
 const compact = require('lodash/compact')
 const flatten = require('lodash/flatten')
+const stringify = require('csv-stringify')
 
 const searchUrlBase = 'https://www.duden.de/suchen/dudenonline/'
 
@@ -42,7 +43,10 @@ function load (link) {
         ).map(example => [example, `${word}<br>${definition}`])
       })
     )
-    console.log(cards)
+    stringify(cards, (error, str) => {
+      console.log('error:', error)
+      console.log(str)
+    })
   })
 }
 
