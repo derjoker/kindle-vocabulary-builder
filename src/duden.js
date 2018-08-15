@@ -16,19 +16,23 @@ function search (word) {
     const links = $('#content section.wide > h2 > a')
       .toArray()
       .map(link => link.attribs.href)
-    console.log(links)
+    links.forEach(load)
   })
 }
 
 function load (link) {
   request(link, (error, response, body) => {
+    console.log(link)
     console.log('error:', error)
     console.log('statusCode:', response && response.statusCode)
     const $ = cheerio.load(body)
     const word = $('section#block-system-main > h1').text()
     const cards = flatten(
       $('section.term-section').toArray().map(section => {
-        const definition = section.parentNode.firstChild.data.trim()
+        const clone = $(section.parentNode).clone()
+        clone.children('section').remove()
+        const definition = clone.html()
+
         return compact(
           flatten(
             section.children.map(child => {
@@ -55,4 +59,3 @@ function load (link) {
 }
 
 search('Debatte')
-load('https://www.duden.de/rechtschreibung/Debatte')
