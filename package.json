@@ -1,0 +1,19 @@
+{
+  "name": "kindle-vocabulary-builder",
+  "version": "0.1.0",
+  "description": "Kindle Vocabulary Builder",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/derjoker/kindle-vocabulary-builder.git"
+  },
+  "author": "Feng Ya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/derjoker/kindle-vocabulary-builder/issues"
+  },
+  "homepage": "https://github.com/derjoker/kindle-vocabulary-builder#readme"
+}
