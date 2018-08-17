@@ -36,6 +36,7 @@ function load (link) {
     const cards = flatten(
       $('section.term-section').toArray().map(section => {
         const clone = $(section.parentNode).clone()
+        clone.children('figure').remove()
         clone.children('section').remove()
         const definition = clone.html()
 
@@ -68,4 +69,5 @@ function load (link) {
 }
 
 // search('Debatte')
+// load('https://www.duden.de/rechtschreibung/Mund_Oeffnung_Lippen_Schlund')
 module.exports = search
