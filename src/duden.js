@@ -28,6 +28,9 @@ function load (link) {
     console.log(link)
     console.log('error:', error)
     console.log('statusCode:', response && response.statusCode)
+
+    if (error || !response || !response.statusCode) return
+
     const $ = cheerio.load(body)
     const word = $('section#block-system-main > h1').text()
     const cards = flatten(
@@ -48,7 +51,10 @@ function load (link) {
               }
             })
           )
-        ).map(example => [example, `${word}<br>${definition}`])
+        ).map(example => [
+          `${word}<br>${example}`,
+          `<a href="${link}" target="_blank">${word}</a><br>${definition}`
+        ])
       })
     )
     stringify(cards, (error, csv) => {
