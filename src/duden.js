@@ -58,4 +58,4 @@ function load (link) {
   })
 }
 
-search('Debatte')
+module.exports = search

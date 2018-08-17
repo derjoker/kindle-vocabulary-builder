@@ -1,5 +1,7 @@
 const XLSX = require('xlsx')
 
+const search = require('./duden')
+
 const file = 'kindle-vocabulary-builder.xlsx'
 const wb = XLSX.readFile(file)
 
@@ -11,6 +13,7 @@ wb.SheetNames.forEach(name => {
   switch (name) {
     case 'Deutsch':
       console.log(words)
+      words.forEach(search)
       break
   }
 })
