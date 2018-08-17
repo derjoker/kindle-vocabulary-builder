@@ -5,7 +5,10 @@ const flatten = require('lodash/flatten')
 const stringify = require('csv-stringify')
 const fs = require('fs')
 
+const file = 'duden.csv'
 const searchUrlBase = 'https://www.duden.de/suchen/dudenonline/'
+
+fs.writeFileSync(file, '')
 
 function search (word) {
   const url = searchUrlBase + word
@@ -51,11 +54,12 @@ function load (link) {
     stringify(cards, (error, csv) => {
       console.log('error:', error)
       console.log(csv)
-      fs.writeFile('duden.csv', csv, { flag: 'a+' }, error => {
+      fs.writeFile(file, csv, { flag: 'a+' }, error => {
         console.log('error:', error)
       })
     })
   })
 }
 
+// search('Debatte')
 module.exports = search
