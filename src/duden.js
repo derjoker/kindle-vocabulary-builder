@@ -69,6 +69,7 @@ function load (link) {
         if (child) {
           switch (child.name) {
             case 'div':
+            case 'p':
               examples = []
               break
             case 'ul':
