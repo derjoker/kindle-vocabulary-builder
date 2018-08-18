@@ -48,30 +48,40 @@ function load (link) {
       const parent = $(section.parentNode).clone()
       parent.children('figure').remove()
       parent.children('section').remove()
-      // if (parent.text().trim() === '')
-      const definition = parent.html()
+      let definition = parent.html()
 
       const child = section.firstChild.next
       const clone = $(section).clone()
       clone.children('h3').remove()
 
       let examples
-      switch (child.name) {
-        case 'div':
-          examples = []
-          break
-        case 'ul':
-          examples = $(child).children().toArray().map(li => $(li).html())
-          break
-        default:
-          examples = [clone.html()]
-          break
+
+      // no definition
+      if (parent.text().trim() === '') {
+        definition = clone.children('span.iw_rumpf_info').first().html()
+        // console.log(definition)
+        examples = clone
+          .children('span.iwtext')
+          .toArray()
+          .map(span => $(span).html())
+        // console.log(examples)
+      } else {
+        switch (child.name) {
+          case 'div':
+            examples = []
+            break
+          case 'ul':
+            examples = $(child).children().toArray().map(li => $(li).html())
+            break
+          default:
+            examples = [clone.html()]
+            break
+        }
       }
+      // console.log(definition)
       // console.log(examples)
 
       return examples.map(example => [
-        example,
-        definition,
         `${word}<br>${example}`,
         `<a href="${link}" target="_blank">${word}</a><br>${definition}`
       ])
