@@ -54,7 +54,7 @@ function load (link) {
       const clone = $(section).clone()
       clone.children('h3').remove()
 
-      let examples
+      let examples = []
 
       // no definition
       if (parent.text().trim() === '') {
@@ -66,16 +66,18 @@ function load (link) {
           .map(span => $(span).html())
         // console.log(examples)
       } else {
-        switch (child.name) {
-          case 'div':
-            examples = []
-            break
-          case 'ul':
-            examples = $(child).children().toArray().map(li => $(li).html())
-            break
-          default:
-            examples = [clone.html()]
-            break
+        if (child) {
+          switch (child.name) {
+            case 'div':
+              examples = []
+              break
+            case 'ul':
+              examples = $(child).children().toArray().map(li => $(li).html())
+              break
+            default:
+              examples = [clone.html()]
+              break
+          }
         }
       }
       // console.log(definition)
@@ -83,7 +85,7 @@ function load (link) {
 
       return examples.map(example => [
         `${word}<br>${example}`,
-        `<a href="${link}" target="_blank">${word}</a><br>${definition}`
+        `${definition}<br><a href="${link}" target="_blank">${word}</a>`
       ])
     })
 
@@ -103,5 +105,9 @@ function load (link) {
 // search('Debatte')
 // load('https://www.duden.de/rechtschreibung/Mund_Oeffnung_Lippen_Schlund')
 // load('https://www.duden.de/rechtschreibung/Aa_Kot')
-load('https://www.duden.de/rechtschreibung/schlieszen')
+// load('https://www.duden.de/rechtschreibung/schlieszen')
+
+// TODO: RECHTSCHREIBUNG
+// load('https://www.duden.de/rechtschreibung/eisern')
+
 module.exports = search
