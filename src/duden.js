@@ -85,7 +85,7 @@ function load (link) {
       // console.log(examples)
 
       return examples.map(example => [
-        `${word}<br>${example}`,
+        `${word}<br><br>${example}`,
         `${definition}<br><a href="${link}" target="_blank">${word}</a>`
       ])
     })
