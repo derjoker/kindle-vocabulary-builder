@@ -1,6 +1,5 @@
 const request = require('request')
 const cheerio = require('cheerio')
-const compact = require('lodash/compact')
 const flatten = require('lodash/flatten')
 const stringify = require('csv-stringify')
 const fs = require('fs')
@@ -45,31 +44,42 @@ function load (link) {
     // console.log(frequency)
     if (frequency < 3) return
 
-    const cards = flatten(
-      $('section.term-section').toArray().map(section => {
-        const clone = $(section.parentNode).clone()
-        clone.children('figure').remove()
-        clone.children('section').remove()
-        const definition = clone.html()
+    const pairs = $('section.term-section').toArray().map(section => {
+      const parent = $(section.parentNode).clone()
+      parent.children('figure').remove()
+      parent.children('section').remove()
+      // if (parent.text().trim() === '')
+      const definition = parent.html()
 
-        return compact(
-          flatten(
-            section.children.map(child => {
-              switch (child.name) {
-                case 'span':
-                  return $(child).html()
-                case 'ul':
-                  return child.children.map(li => $(li).html())
-                default:
-              }
-            })
-          )
-        ).map(example => [
-          `${word}<br>${example}`,
-          `<a href="${link}" target="_blank">${word}</a><br>${definition}`
-        ])
-      })
-    )
+      const child = section.firstChild.next
+      const clone = $(section).clone()
+      clone.children('h3').remove()
+
+      let examples
+      switch (child.name) {
+        case 'div':
+          examples = []
+          break
+        case 'ul':
+          examples = $(child).children().toArray().map(li => $(li).html())
+          break
+        default:
+          examples = [clone.html()]
+          break
+      }
+      // console.log(examples)
+
+      return examples.map(example => [
+        example,
+        definition,
+        `${word}<br>${example}`,
+        `<a href="${link}" target="_blank">${word}</a><br>${definition}`
+      ])
+    })
+
+    const cards = flatten(pairs)
+    // console.log(cards)
+
     stringify(cards, (error, csv) => {
       if (error) console.log('error:', error)
       // console.log(csv)
@@ -83,4 +93,5 @@ function load (link) {
 // search('Debatte')
 // load('https://www.duden.de/rechtschreibung/Mund_Oeffnung_Lippen_Schlund')
 // load('https://www.duden.de/rechtschreibung/Aa_Kot')
+load('https://www.duden.de/rechtschreibung/schlieszen')
 module.exports = search
