@@ -8,7 +8,7 @@ fs.writeFileSync(file, '')
 
 const baseUrl = 'https://www.duden.de/suchen/dudenonline/'
 
-function search (words) {
+function search (words = []) {
   const c = new Crawler({
     callback: function s (error, response, done) {
       if (error) {
@@ -27,7 +27,7 @@ function search (words) {
   c.queue(words.map(word => baseUrl + word))
 }
 
-function parse (links) {
+function parse (links = []) {
   const c = new Crawler({
     callback: function p (error, response, done) {
       if (error) {
@@ -118,4 +118,7 @@ function parse (links) {
 //   'https://www.duden.de/rechtschreibung/eisern' // TODO: RECHTSCHREIBUNG
 // ])
 
-module.exports = search
+module.exports = {
+  parse,
+  search
+}

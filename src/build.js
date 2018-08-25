@@ -1,6 +1,6 @@
 const XLSX = require('xlsx')
 
-const search = require('./duden')
+const { search } = require('./duden')
 
 const file = 'duden.xlsx'
 const wb = XLSX.readFile(file)
