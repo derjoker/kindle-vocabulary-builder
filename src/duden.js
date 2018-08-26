@@ -36,7 +36,10 @@ function parse (links = []) {
       } else {
         const $ = response.$
         const link = response.request.uri.href
-        const word = $('section#block-system-main > h1').text()
+        const word = $('section#block-system-main > h1')
+          .text()
+          .replace(/\u00AD/g, '')
+        // console.log(word)
 
         const disabled = $('div > strong > span.disabled')
         const frequency = disabled && 5 - disabled.text().split('').length
