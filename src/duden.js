@@ -29,6 +29,7 @@ function search (words = []) {
 
 function parse (links = []) {
   const c = new Crawler({
+    maxConnections: 20,
     callback: function p (error, response, done) {
       if (error) {
         console.log(error)
