@@ -91,8 +91,8 @@ function parse (links = []) {
           // console.log(examples)
 
           return examples.map(example => [
-            `${word}<br><br>${example}`,
-            `${definition}<br><a href="${link}" target="_blank">${word}</a>`
+            `<div><h2>${word}</h2></div><div>${example}</div>`,
+            `<div>${definition}</div><br><div><a href="${link}" target="_blank">${word}</a></div>`
           ])
         })
 
