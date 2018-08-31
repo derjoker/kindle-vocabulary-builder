@@ -1,8 +1,24 @@
 import React, { Component } from 'react'
+import { Query } from 'react-apollo'
+import gql from 'graphql-tag'
 import sql from 'sql.js'
 import zipObject from 'lodash/zipObject'
 
 import VocabTable from '../components/VocabTable'
+
+const VOCAB_QUERY = gql`
+{
+  vocabs {
+    id
+    usage
+    word
+    stem
+    lang
+    title
+    ignore
+  }
+}
+`
 
 class Vocab extends Component {
   constructor (props) {
@@ -50,8 +66,15 @@ class Vocab extends Component {
     const { vocabs } = this.state
     return (
       <div>
-        <input type='file' accept='.db' onChange={this.onChange} />
+        <div><input type='file' accept='.db' onChange={this.onChange} /></div>
         <br />
+        <Query query={VOCAB_QUERY}>
+          {({ loading, error, data }) => {
+            console.log(loading, error, data)
+            if (loading) return <div>Loading...</div>
+            return <div>TODO: Query</div>
+          }}
+        </Query>
         <br />
         <VocabTable data={vocabs} />
       </div>
