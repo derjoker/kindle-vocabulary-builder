@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import sql from 'sql.js'
+import zipObject from 'lodash/zipObject'
+
+import VocabTable from '../components/VocabTable'
 
 class Vocab extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      values: []
+      vocabs: []
     }
     this.onChange = this.onChange.bind(this)
   }
@@ -31,11 +34,12 @@ class Vocab extends Component {
         ON LOOKUPS.book_key = BOOK_INFO.id
       `
       )
-      console.log(result)
       db.close()
 
       this.setState({
-        values: result[0].values
+        vocabs: result[0].values.map(value =>
+          zipObject(result[0].columns, value)
+        )
       })
     }
     // reader.readAsBinaryString(file)
@@ -43,11 +47,13 @@ class Vocab extends Component {
   }
 
   render () {
+    const { vocabs } = this.state
     return (
       <div>
         <input type='file' accept='.db' onChange={this.onChange} />
-        <div>Table</div>
-        {JSON.stringify(this.state.values)}
+        <br />
+        <br />
+        <VocabTable data={vocabs} />
       </div>
     )
   }
