@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 
 const client = new ApolloClient({
-  uri: 'https://api-apeast.graphcms.com/v1/cjlhe8jkd007i01aw651wry1e/master'
+  uri: 'http://localhost:4000/'
 })
 
 class App extends Component {

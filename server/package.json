@@ -1,0 +1,12 @@
+{
+  "name": "kindle-vocabulary-builder",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "dependencies": {
+    "apollo-server": "^2.0.5",
+    "graphql": "^14.0.0"
+  }
+}

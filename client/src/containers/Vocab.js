@@ -14,7 +14,6 @@ const VOCAB_QUERY = gql`
     stem
     lang
     title
-    ignore
   }
 }
 `
