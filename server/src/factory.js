@@ -1,4 +1,4 @@
-import { pick, omit, isEqual } from 'lodash'
+import { pick, omit, defaults, isEqual } from 'lodash'
 
 export default function Facotry (db, name, schema, indexes = []) {
   const Model = db.model(name, schema)
@@ -31,7 +31,7 @@ export default function Facotry (db, name, schema, indexes = []) {
 
     if (found) {
       const _doc = found.toJSON()
-      const _update = { ...doc, ..._doc }
+      const _update = defaults({}, _doc, doc)
       return isEqual(_update, _doc) ? found : update(_update)
     }
 
