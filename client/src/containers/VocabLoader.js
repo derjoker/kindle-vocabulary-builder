@@ -1,8 +1,23 @@
 import React, { Component } from 'react'
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
 import sql from 'sql.js'
 import { differenceBy, zipObject } from 'lodash'
 
 import VocabTable from '../components/VocabTable'
+
+const UPSERT_VOCABS = gql`
+mutation upsertVocabs ($vocabs: [VocabInput]!) {
+  upsertVocabs (vocabs: $vocabs) {
+    id
+    usage
+    word
+    stem
+    lang
+    title
+  }
+}
+`
 
 class VocabLoader extends Component {
   constructor (props) {
@@ -58,7 +73,24 @@ class VocabLoader extends Component {
     const { vocabs } = this.state
     return (
       <div>
-        <div><input type='file' accept='.db' onChange={this.onChange} /></div>
+        <div>
+          <input type='file' accept='.db' onChange={this.onChange} />
+          <Mutation mutation={UPSERT_VOCABS}>
+            {upsertVocabs => (
+              <button
+                onClick={() => {
+                  if (vocabs.length > 0) {
+                    upsertVocabs({
+                      variables: { vocabs }
+                    })
+                  }
+                }}
+              >
+                Import
+              </button>
+            )}
+          </Mutation>
+        </div>
         <br />
         <VocabTable data={vocabs} />
       </div>

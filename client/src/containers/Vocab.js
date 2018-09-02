@@ -3,7 +3,7 @@ import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 import { pick } from 'lodash'
 
-import VocabLoader from '../components/VocabLoader'
+import VocabLoader from './VocabLoader'
 
 const VOCAB_QUERY = gql`
 {
