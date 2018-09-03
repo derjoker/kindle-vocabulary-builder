@@ -31,7 +31,7 @@ class VocabLoader extends Component {
   onChange (event) {
     const file = event.target.files[0]
 
-    if (file.name !== 'vocab.db') return
+    if (!file || file.name !== 'vocab.db') return
 
     /* global FileReader */
     const reader = new FileReader()
