@@ -28,7 +28,7 @@ class VocabLoader extends Component {
     this.onChange = this.onChange.bind(this)
   }
 
-  onChange (event) {
+  onChange (event, upsertVocabs) {
     const file = event.target.files[0]
 
     if (!file || file.name !== 'vocab.db') return
@@ -61,9 +61,11 @@ class VocabLoader extends Component {
         'id'
       )
 
-      this.setState({
-        vocabs
-      })
+      if (vocabs.length > 0) {
+        upsertVocabs({
+          variables: { vocabs }
+        })
+      }
     }
     reader.readAsBinaryString(file)
     // reader.readAsArrayBuffer(file)
@@ -74,20 +76,23 @@ class VocabLoader extends Component {
     return (
       <div>
         <div>
-          <input type='file' accept='.db' onChange={this.onChange} />
-          <Mutation mutation={UPSERT_VOCABS}>
+          <Mutation
+            mutation={UPSERT_VOCABS}
+            update={(_, { data: { upsertVocabs } }) => {
+              this.setState({
+                vocabs: upsertVocabs
+              })
+            }}
+          >
             {upsertVocabs => (
-              <button
-                onClick={() => {
-                  if (vocabs.length > 0) {
-                    upsertVocabs({
-                      variables: { vocabs }
-                    })
-                  }
-                }}
-              >
-                Import
-              </button>
+              <div>
+                <input
+                  type='file'
+                  accept='.db'
+                  onChange={event => this.onChange(event, upsertVocabs)}
+                />
+                <button>Build</button>
+              </div>
             )}
           </Mutation>
         </div>
