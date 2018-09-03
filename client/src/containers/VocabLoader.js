@@ -85,14 +85,11 @@ class VocabLoader extends Component {
             }}
           >
             {upsertVocabs => (
-              <div>
-                <input
-                  type='file'
-                  accept='.db'
-                  onChange={event => this.onChange(event, upsertVocabs)}
-                />
-                <button>Build</button>
-              </div>
+              <input
+                type='file'
+                accept='.db'
+                onChange={event => this.onChange(event, upsertVocabs)}
+              />
             )}
           </Mutation>
         </div>

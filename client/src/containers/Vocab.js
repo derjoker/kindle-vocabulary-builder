@@ -3,7 +3,7 @@ import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 import { pick } from 'lodash'
 
-import VocabLoader from './VocabLoader'
+import VocabDialog from './VocabDialog'
 
 const VOCAB_QUERY = gql`
 {
@@ -32,7 +32,7 @@ class Vocab extends Component {
 
             return (
               <div>
-                <VocabLoader ids={ids} />
+                <VocabDialog ids={ids} />
               </div>
             )
           }}
