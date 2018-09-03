@@ -27,6 +27,7 @@ type Query {
 
 type Mutation {
   upsertVocabs (vocabs: [VocabInput]!) : [Vocab]
+  updateVocab (vocab: VocabInput!) : Vocab
 }
 `
 
@@ -35,6 +36,7 @@ export const resolvers = {
     vocabs: () => Vocab.find({})
   },
   Mutation: {
-    upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs)
+    upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs),
+    updateVocab: (_, { vocab }) => Vocab.update(vocab)
   }
 }

@@ -1,23 +1,11 @@
 import React, { Component } from 'react'
 import { Mutation } from 'react-apollo'
-import gql from 'graphql-tag'
 import sql from 'sql.js'
 import { differenceBy, zipObject } from 'lodash'
 
-import VocabTable from '../components/VocabTable'
+import VocabTable from '../containers/VocabTable'
 
-const UPSERT_VOCABS = gql`
-mutation upsertVocabs ($vocabs: [VocabInput]!) {
-  upsertVocabs (vocabs: $vocabs) {
-    id
-    usage
-    word
-    stem
-    lang
-    title
-  }
-}
-`
+import { VOCAB_QUERY, UPSERT_VOCABS } from '../graphql'
 
 class VocabLoader extends Component {
   constructor (props) {
@@ -78,9 +66,16 @@ class VocabLoader extends Component {
         <div>
           <Mutation
             mutation={UPSERT_VOCABS}
-            update={(_, { data: { upsertVocabs } }) => {
+            update={(cache, { data: { upsertVocabs } }) => {
               this.setState({
                 vocabs: upsertVocabs
+              })
+              const { vocabs } = cache.readQuery({
+                query: VOCAB_QUERY
+              })
+              cache.writeQuery({
+                query: VOCAB_QUERY,
+                data: { vocabs: vocabs.concat(upsertVocabs) }
               })
             }}
           >

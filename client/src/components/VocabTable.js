@@ -4,7 +4,7 @@ import cellEditFactory from 'react-bootstrap-table2-editor'
 
 class VocabTable extends Component {
   render () {
-    const { data } = this.props
+    const { data, save } = this.props
     const columns = [
       { dataField: 'usage', text: 'Usage', editable: false },
       { dataField: 'word', text: 'Word', editable: false },
@@ -25,6 +25,10 @@ class VocabTable extends Component {
             beforeSaveCell: (oldValue, newValue, row, column) => {
               console.log('Before Saving Cell!!')
               console.log(oldValue, newValue, row, column)
+              save({
+                id: row.id,
+                [column.dataField]: newValue
+              })
             },
             afterSaveCell: (oldValue, newValue, row, column) => {
               console.log('After Saving Cell!!')

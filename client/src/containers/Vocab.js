@@ -1,22 +1,11 @@
 import React, { Component } from 'react'
 import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
 import { pick } from 'lodash'
 
 import VocabDialog from './VocabDialog'
+import VocabTable from './VocabTable'
 
-const VOCAB_QUERY = gql`
-{
-  vocabs {
-    id
-    usage
-    word
-    stem
-    lang
-    title
-  }
-}
-`
+import { VOCAB_QUERY } from '../graphql'
 
 class Vocab extends Component {
   render () {
@@ -33,6 +22,8 @@ class Vocab extends Component {
             return (
               <div>
                 <VocabDialog ids={ids} />
+                <br />
+                <VocabTable data={vocabs} />
               </div>
             )
           }}
