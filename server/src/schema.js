@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server'
 import { uniq } from 'lodash'
 
-import { Vocab, Card, List } from './model'
+import { Vocab, Word, Card, List } from './model'
 import duden from './lang/duden'
 
 export const typeDefs = gql`
@@ -41,10 +41,7 @@ type Word {
 # Card = Word + note + category
 type Card {
   id: ID!
-  link: String
-  word: String
-  example: String
-  definition: String
+  word: Word
   note: String
   category: String
 }
@@ -97,6 +94,9 @@ export const resolvers = {
   List: {
     cards: list => Card.fetch(list.cardIds)
   },
+  Card: {
+    word: card => Word.findById(card.wordId)
+  },
   Mutation: {
     upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs),
     updateVocab: (_, { vocab }) => Vocab.update(vocab),
@@ -110,7 +110,10 @@ export const resolvers = {
       const vocabs = await Vocab.find(condition)
       const stems = uniq(vocabs.map(vocab => vocab.stem))
       list.stems = stems
-      return List.update(list)
+      duden(list, () => {
+        console.log('done')
+      })
+      return list
     },
     buildList: async (_, { id }) => {
       const list = await List.findById(id)

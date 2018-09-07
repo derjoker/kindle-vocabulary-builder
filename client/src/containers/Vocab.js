@@ -4,7 +4,6 @@ import { pick } from 'lodash'
 
 import VocabDialog from './VocabDialog'
 import VocabTable from './VocabTable'
-import VocabBuilder from './VocabBuilder'
 
 import { VOCAB_QUERY } from '../graphql'
 
@@ -22,8 +21,6 @@ class Vocab extends Component {
             return (
               <div>
                 <VocabDialog ids={ids} />
-                <br />
-                <VocabBuilder />
                 <br />
                 <VocabTable data={vocabs} />
               </div>

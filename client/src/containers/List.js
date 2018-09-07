@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Query } from 'react-apollo'
 
+import ListBuilder from './ListBuilder'
+
 import { LIST_QUERY } from '../graphql'
 
 class WordList extends Component {
@@ -16,6 +18,7 @@ class WordList extends Component {
 
           return (
             <div>
+              <ListBuilder id={id} />
               <div>{lang}</div>
               <div>{title}</div>
               <div>stems: {stems.length}</div>

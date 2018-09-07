@@ -58,12 +58,24 @@ query List ($id: ID!) {
     stems
     cards {
       id
-      word
-      example
-      definition
+      word {
+        link
+        word
+        example
+        definition
+      }
       note
       category
     }
+  }
+}
+`
+
+export const UPDATE_STEMS = gql`
+mutation UpdateStems ($id: ID!) {
+  updateStems (id: $id) {
+    id
+    stems
   }
 }
 `
