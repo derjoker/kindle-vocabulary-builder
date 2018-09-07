@@ -92,6 +92,7 @@ describe('factory', () => {
       address: 'address',
       age: 28
     })
+    expect(user2.id).toEqual(user1.id)
     expect(user2.address).toEqual('address')
     expect(user2.age).toEqual(27)
   })
@@ -107,7 +108,7 @@ describe('factory', () => {
     expect(users[1].age).toEqual(27)
   })
 
-  it('update doc, keep index fields (e.g. email) untouched', async () => {
+  it('update doc, including index fields (e.g. email)', async () => {
     const doc = {
       name: 'insert-' + uuid(),
       email: 'insert@mail.com',
@@ -120,8 +121,7 @@ describe('factory', () => {
       email: 'new@mail.com',
       age: 28
     })
-    expect(user2.email).not.toEqual('new@mail.com')
-    expect(user2.email).toEqual('insert@mail.com')
+    expect(user2.email).toEqual('new@mail.com')
     expect(user2.age).toEqual(28)
   })
 

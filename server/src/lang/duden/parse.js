@@ -1,8 +1,7 @@
 import { flatten } from 'lodash'
 
 export default function parse ($) {
-  const word = $('section#block-system-main > h1').text()
-  // .replace(/\u00AD/g, '')
+  const word = $('section#block-system-main > h1').text().replace(/\u00AD/g, '')
   // console.log(word)
 
   // const disabled = $('div > strong > span.disabled')

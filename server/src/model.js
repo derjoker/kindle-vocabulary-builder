@@ -35,20 +35,19 @@ const word = Schema({
 
 export const Word = Factory(db, 'Word', word)
 
-// ankiId = wordId
-const anki = Schema({
+// cardId = wordId
+const card = Schema({
   _id: { type: String, alias: 'id' }, // wordId, TODO: hash({userId, wordId})
-  wordId: { type: String, alias: 'id' },
+  wordId: String,
   note: String,
   category: String
 })
 
-export const Anki = Factory(db, 'Anki', anki)
+export const Card = Factory(db, 'Card', card)
 
 const list = Schema({
-  _id: { type: String, alias: 'id' },
   name: String,
-  // userId: { type: String, alias: 'id' },
+  // userId: String,
   lang: String,
   title: String,
   stems: [String],
@@ -58,13 +57,7 @@ const list = Schema({
       links: [String]
     }
   ],
-  links: [
-    {
-      link: String,
-      wordIds: [String]
-    }
-  ],
-  ankiIds: [String]
+  cardIds: [String]
 })
 
 export const List = Factory(db, 'List', list)

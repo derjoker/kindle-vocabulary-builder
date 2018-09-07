@@ -1,18 +1,10 @@
-import { pick, omit, defaults, isEqual } from 'lodash'
+import { pick, defaults, isEqual } from 'lodash'
 
 export default function Facotry (db, name, schema, indexes = []) {
   const Model = db.model(name, schema)
 
   async function update (doc) {
-    const _id = doc._id || doc.id
-
-    if (!_id) throw new Error('doc.id or doc._id undefined')
-
-    doc._id = _id
-    const model = new Model(doc)
-    const _doc = model.toJSON()
-    const _update = omit(pick(_doc, Object.keys(doc)), indexes)
-    return Model.findByIdAndUpdate(_id, _update, { new: true })
+    return Model.findByIdAndUpdate(doc._id || doc.id, doc, { new: true })
   }
 
   async function insert (doc) {
