@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import Main from './Main'
 
@@ -14,7 +15,9 @@ class App extends Component {
   render () {
     return (
       <ApolloProvider client={client}>
-        <Main />
+        <Router>
+          <Main />
+        </Router>
       </ApolloProvider>
     )
   }

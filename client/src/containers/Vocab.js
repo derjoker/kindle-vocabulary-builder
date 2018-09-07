@@ -13,9 +13,8 @@ class Vocab extends Component {
     return (
       <div>
         <Query query={VOCAB_QUERY}>
-          {({ loading, error, data }) => {
-            console.log(loading, error, data)
-            if (loading) return <div>Loading...</div>
+          {({ loading, data }) => {
+            if (loading) return <div />
 
             const { vocabs } = data
             const ids = vocabs.map(vocab => pick(vocab, 'id'))

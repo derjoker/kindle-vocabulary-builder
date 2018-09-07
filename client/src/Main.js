@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Route, Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import {
   Drawer,
@@ -15,6 +16,8 @@ import {
 import HomeIcon from '@material-ui/icons/Home'
 
 import Vocab from './containers/Vocab'
+import Lists from './containers/Lists'
+import WordList from './containers/List'
 
 const drawerWidth = 240
 
@@ -41,7 +44,6 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     marginLeft: drawerWidth,
-    backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     minWidth: 0 // So the Typography noWrap works
   },
@@ -56,6 +58,8 @@ function Main (props) {
       <AppBar position='fixed' className={classes.appBar}>
         <Toolbar>
           <IconButton
+            component={Link}
+            to='/'
             className={classes.menuButton}
             color='inherit'
             aria-label='Home'
@@ -78,10 +82,8 @@ function Main (props) {
           <ListItem button>
             <ListItemText primary='+' />
           </ListItem>
-          <ListItem button>
-            <ListItemText primary='Deutsch' />
-          </ListItem>
         </List>
+        <Lists />
         <Divider />
         <List>
           <ListItem button>
@@ -91,7 +93,8 @@ function Main (props) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Vocab />
+        <Route exact path='/' component={Vocab} />
+        <Route path='/lists/:id' component={WordList} />
       </main>
     </div>
   )

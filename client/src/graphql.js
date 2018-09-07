@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const VOCAB_QUERY = gql`
-{
+query {
   vocabs {
     id
     usage
@@ -35,6 +35,35 @@ mutation UpdateVocab ($vocab: VocabInput!) {
     stem
     lang
     title
+  }
+}
+`
+
+export const LISTS_QUERY = gql`
+query {
+  lists {
+    id
+    name
+  }
+}
+`
+
+export const LIST_QUERY = gql`
+query List ($id: ID!) {
+  list (id: $id) {
+    id
+    name
+    lang
+    title
+    stems
+    cards {
+      id
+      word
+      example
+      definition
+      note
+      category
+    }
   }
 }
 `
