@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
 
-import Vocab from './containers/Vocab'
+import Main from './Main'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/'
@@ -15,10 +14,7 @@ class App extends Component {
   render () {
     return (
       <ApolloProvider client={client}>
-        <div className='App'>
-          <h2>Kindle Vocabulary Builder</h2>
-          <Vocab />
-        </div>
+        <Main />
       </ApolloProvider>
     )
   }
