@@ -75,7 +75,8 @@ class CardTable extends Component {
 
 CardTable.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  save: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(CardTable)

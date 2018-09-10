@@ -1,48 +1,75 @@
 import React, { Component } from 'react'
-import BootstrapTable from 'react-bootstrap-table-next'
-import cellEditFactory from 'react-bootstrap-table2-editor'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper
+} from '@material-ui/core'
+
+import TextFieldStem from './TextFieldStem'
+
+const styles = theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+    overflowX: 'auto'
+  },
+  table: {
+    minWidth: 700
+  },
+  row: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.background.default
+    }
+  }
+})
 
 class VocabTable extends Component {
   render () {
-    const { data, save } = this.props
-    const columns = [
-      { dataField: 'usage', text: 'Usage', editable: false },
-      { dataField: 'word', text: 'Word', editable: false },
-      { dataField: 'stem', text: 'Stem' },
-      { dataField: 'lang', text: 'Lang', editable: false },
-      { dataField: 'title', text: 'Title', editable: false }
-    ]
+    const { classes, data, save } = this.props
     return (
-      <div>
-        <BootstrapTable
-          keyField='id'
-          data={data}
-          columns={columns}
-          noDataIndication='Table is Empty'
-          cellEdit={cellEditFactory({
-            mode: 'dbclick',
-            blurToSave: true,
-            beforeSaveCell: (oldValue, newValue, row, column) => {
-              console.log('Before Saving Cell!!')
-              console.log(oldValue, newValue, row, column)
-              save({
-                id: row.id,
-                [column.dataField]: newValue
-              })
-            },
-            afterSaveCell: (oldValue, newValue, row, column) => {
-              console.log('After Saving Cell!!')
-              console.log(oldValue, newValue, row, column)
-            }
-          })}
-          bootstrap4
-          striped
-          hover
-          condensed
-        />
-      </div>
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Usage</TableCell>
+              <TableCell>Word</TableCell>
+              <TableCell>Stem</TableCell>
+              <TableCell>Lang</TableCell>
+              <TableCell>Title</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map(vocab => {
+              return (
+                <TableRow className={classes.row} key={vocab.id}>
+                  <TableCell component='th' scope='row'>
+                    {vocab.usage}
+                  </TableCell>
+                  <TableCell>{vocab.word}</TableCell>
+                  <TableCell>
+                    <TextFieldStem data={vocab} save={save} />
+                  </TableCell>
+                  <TableCell>{vocab.lang}</TableCell>
+                  <TableCell>{vocab.title}</TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </Paper>
     )
   }
 }
 
-export default VocabTable
+VocabTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  save: PropTypes.func.isRequired
+}
+
+export default withStyles(styles)(VocabTable)
