@@ -35,6 +35,7 @@ mutation UpdateVocab ($vocab: VocabInput!) {
     stem
     lang
     title
+    delete
   }
 }
 `

@@ -20,7 +20,9 @@ const vocab = Schema({
   word: String,
   stem: String,
   lang: String,
-  title: String
+  title: String,
+  links: [String],
+  delete: Boolean
 })
 
 export const Vocab = Factory(db, 'Vocab', vocab)

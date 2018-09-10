@@ -18,6 +18,8 @@ type Vocab {
   stem: String
   lang: String
   title: String
+  links: [String!]
+  delete: Boolean
 }
 
 input VocabInput {
@@ -28,6 +30,8 @@ input VocabInput {
   stem: String
   lang: String
   title: String
+  links: [String!]
+  delete: Boolean
 }
 
 type Word {
@@ -80,6 +84,7 @@ input ListInput {
 
 type Query {
   vocabs: [Vocab]
+  vocabIds: [ID!]
   lists: [List]
   list(id: ID!): List
 }
@@ -96,7 +101,11 @@ type Mutation {
 
 export const resolvers = {
   Query: {
-    vocabs: () => Vocab.find({}),
+    vocabs: () => Vocab.find({ delete: { $ne: true } }),
+    vocabIds: async () => {
+      const vocabs = await Vocab.find({})
+      return vocabs.map(vocab => vocab.id)
+    },
     lists: () => List.find({}),
     list: (_, { id }) => List.findById(id)
   },
