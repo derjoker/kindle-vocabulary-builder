@@ -38,6 +38,14 @@ type Word {
   definition: String
 }
 
+enum Category {
+  EASY
+  LEARN
+  STAGED
+  HARD
+  DELETE
+}
+
 # Card = Word + note + category
 type Card {
   id: ID!
@@ -48,7 +56,7 @@ type Card {
 
 input CardInput {
   id: ID!
-  wordId: ID!
+  wordId: ID
   note: String
   category: String
 }
@@ -79,6 +87,7 @@ type Query {
 type Mutation {
   upsertVocabs (vocabs: [VocabInput]!) : [Vocab]
   updateVocab (vocab: VocabInput!) : Vocab
+  updateCard (card: CardInput!) : Card
   createList (list: ListInput!) : List
   updateStems (id: ID!) : List
   buildList (id: ID!) : List
@@ -100,6 +109,7 @@ export const resolvers = {
   Mutation: {
     upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs),
     updateVocab: (_, { vocab }) => Vocab.update(vocab),
+    updateCard: (_, { card }) => Card.update(card),
     createList: (_, { list }) => List.upsert(list),
     updateStems: async (_, { id }) => {
       const list = await List.findById(id)

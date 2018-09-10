@@ -39,6 +39,16 @@ mutation UpdateVocab ($vocab: VocabInput!) {
 }
 `
 
+export const UPDATE_CARD = gql`
+mutation UpdateCard ($card: CardInput!) {
+  updateCard (card: $card) {
+    id
+    note
+    category
+  }
+}
+`
+
 export const LISTS_QUERY = gql`
 query {
   lists {

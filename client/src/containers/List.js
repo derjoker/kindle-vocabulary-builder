@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Query } from 'react-apollo'
 
 import ListBuilder from './ListBuilder'
+import CardTable from './CardTable'
 
 import { LIST_QUERY } from '../graphql'
 
@@ -23,6 +24,7 @@ class WordList extends Component {
               <div>{title}</div>
               <div>stems: {stems.length}</div>
               <div>cards: {cards.length}</div>
+              <CardTable data={cards} />
             </div>
           )
         }}
