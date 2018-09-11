@@ -9,6 +9,7 @@ query {
     stem
     lang
     title
+    delete
   }
 }
 `
@@ -22,6 +23,7 @@ mutation UpsertVocabs ($vocabs: [VocabInput]!) {
     stem
     lang
     title
+    delete
   }
 }
 `

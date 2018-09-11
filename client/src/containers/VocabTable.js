@@ -1,6 +1,6 @@
 import React from 'react'
 import { Mutation } from 'react-apollo'
-import { reject } from 'lodash'
+import { reject, find } from 'lodash'
 
 import VocabTable from '../components/VocabTable'
 
@@ -26,7 +26,13 @@ export default ({ data }) => (
         data={data}
         save={vocab =>
           updateVocab({
-            variables: { vocab }
+            variables: { vocab },
+            optimisticResponse: {
+              updateVocab: {
+                ...find(data, { id: vocab.id }),
+                ...vocab
+              }
+            }
           })}
       />
     )}

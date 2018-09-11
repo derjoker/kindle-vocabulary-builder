@@ -13,6 +13,7 @@ class Vocab extends Component {
       <div>
         <Query query={VOCAB_QUERY}>
           {({ loading, data }) => {
+            console.log(data)
             if (loading) return <div />
 
             const { vocabs } = data
