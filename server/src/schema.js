@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server'
-import { uniq } from 'lodash'
+import { uniq, flatten } from 'lodash'
+import hash from 'object-hash'
 
 import { Vocab, Word, Card, List } from './model'
-import duden from './lang/duden'
 import build from './lang/build'
 
 export const typeDefs = gql`
@@ -71,8 +71,9 @@ input CardInput {
 type List {
   id: ID!
   name: String!
-  lang: String!
+  lang: String
   title: String
+  filter: String
   stems: [String]
   cards: [Card]
 }
@@ -83,6 +84,7 @@ input ListInput {
   userId: ID
   lang: String
   title: String
+  filter: String
 }
 
 type Query {
@@ -99,7 +101,6 @@ type Mutation {
   updateCard (card: CardInput!) : Card
   createList (list: ListInput!) : List
   updateStems (id: ID!) : List
-  buildList (id: ID!) : List
 }
 `
 
@@ -133,23 +134,27 @@ export const resolvers = {
     updateStems: async (_, { id }) => {
       const list = await List.findById(id)
       const condition = {
-        lang: list.lang
+        delete: { $ne: true }
       }
+      if (list.lang) condition.lang = list.lang
       if (list.title) condition.title = list.title
       const vocabs = await Vocab.find(condition)
       const stems = uniq(vocabs.map(vocab => vocab.stem))
       list.stems = stems
-      duden(list, () => {
-        console.log('done')
-      })
-      return list
-    },
-    buildList: async (_, { id }) => {
-      const list = await List.findById(id)
-      duden(list, () => {
-        console.log('done')
-      })
-      return list
+      const links = uniq(flatten(vocabs.map(vocab => vocab.links)))
+      const words = await Word.find({ link: { $in: links } })
+      const cards = await Card.upsert(
+        words.map(word => {
+          const card = {
+            // userId: 'userId',
+            wordId: word.id
+          }
+          card.id = hash(card)
+          return card
+        })
+      )
+      list.cardIds = cards.map(card => card.id)
+      return List.update(list)
     }
   }
 }

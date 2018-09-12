@@ -60,6 +60,14 @@ mutation UpdateCard ($card: CardInput!) {
 }
 `
 
+export const CREATE_LIST = gql`
+mutation CreateList ($list: ListInput!) {
+  createList (list: $list) {
+    id
+  }
+}
+`
+
 export const LISTS_QUERY = gql`
 query {
   lists {

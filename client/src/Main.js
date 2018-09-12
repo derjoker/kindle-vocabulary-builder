@@ -78,11 +78,6 @@ function Main (props) {
         }}
       >
         <div className={classes.toolbar} />
-        <List>
-          <ListItem button>
-            <ListItemText primary='+' />
-          </ListItem>
-        </List>
         <Lists />
         <Divider />
         <List>

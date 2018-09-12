@@ -53,6 +53,7 @@ const list = Schema({
   // userId: String,
   lang: String,
   title: String,
+  filter: String,
   stems: [String],
   searches: [
     {

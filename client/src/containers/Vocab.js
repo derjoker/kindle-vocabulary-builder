@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Query } from 'react-apollo'
-import { pick } from 'lodash'
+import { pick, uniqBy, groupBy } from 'lodash'
 
 import VocabDialog from './VocabDialog'
 import VocabBuilder from './VocabBuilder'
+import VocabFilter from './VocabFilter'
 import VocabTable from './VocabTable'
 
 import { VOCAB_QUERY } from '../graphql'
@@ -19,12 +20,22 @@ class Vocab extends Component {
 
             const { vocabs } = data
             const ids = vocabs.map(vocab => pick(vocab, 'id'))
+            const filters = groupBy(
+              uniqBy(
+                vocabs.map(vocab => pick(vocab, ['lang', 'title'])),
+                'title'
+              ),
+              'lang'
+            )
+            // console.log(filters)
 
             return (
               <div>
                 <VocabDialog ids={ids} />
                 <br />
                 <VocabBuilder />
+                <br />
+                <VocabFilter filters={filters} />
                 <br />
                 <VocabTable data={vocabs} />
               </div>
