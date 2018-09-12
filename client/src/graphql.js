@@ -42,6 +42,14 @@ mutation UpdateVocab ($vocab: VocabInput!) {
 }
 `
 
+export const BUILD_VOCABS = gql`
+mutation BuildVocabs {
+  buildVocabs {
+    id
+  }
+}
+`
+
 export const UPDATE_CARD = gql`
 mutation UpdateCard ($card: CardInput!) {
   updateCard (card: $card) {

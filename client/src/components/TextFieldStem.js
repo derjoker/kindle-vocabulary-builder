@@ -36,6 +36,7 @@ class TextFieldStem extends Component {
 
           save({
             id: data.id,
+            build: false,
             stem
           })
         }}

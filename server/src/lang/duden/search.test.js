@@ -10,7 +10,9 @@ describe('duden search', () => {
   it('runs', () => {
     const length = {
       Debatte: 1,
-      sein: 4
+      sein: 4,
+      Gedanke: 1,
+      Gedanken: 1
     }
     const files = readdirSync(path).filter(file => file.endsWith('htm'))
     files.forEach(file => {

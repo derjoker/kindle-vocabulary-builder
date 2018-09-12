@@ -1,3 +1,4 @@
+/* global URL */
 import Crawler from 'crawler'
 
 import duden from './duden/search'
@@ -11,7 +12,7 @@ export default function search (vocabs, done) {
       let parse = function () {}
       switch (vocab.lang) {
         case 'de':
-          uri = 'https://www.duden.de/suchen/dudenonline/' + vocab.stem
+          uri = new URL('https://www.duden.de/suchen/dudenonline/' + vocab.stem)
           parse = duden
           break
       }
@@ -22,10 +23,10 @@ export default function search (vocabs, done) {
         } else if (response.statusCode !== 200) {
           // console.log(response)
         } else {
-          // ...
           const links = parse(response.$)
           result.push({
             id: vocab.id,
+            build: true,
             links
           })
         }

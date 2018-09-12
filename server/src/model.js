@@ -21,6 +21,7 @@ const vocab = Schema({
   stem: String,
   lang: String,
   title: String,
+  build: Boolean,
   links: [String],
   delete: Boolean
 })

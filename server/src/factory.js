@@ -57,7 +57,13 @@ export default function Facotry (db, name, schema, indexes = []) {
     })
   }
 
-  Model.update = update
+  Model.update = async function (docs) {
+    if (Array.isArray(docs)) {
+      return Promise.all(docs.map(update))
+    }
+
+    return update(docs)
+  }
   Model.upsert = upsert
   Model.fetch = fetch
 

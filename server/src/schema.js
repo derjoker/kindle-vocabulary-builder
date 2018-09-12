@@ -3,6 +3,7 @@ import { uniq } from 'lodash'
 
 import { Vocab, Word, Card, List } from './model'
 import duden from './lang/duden'
+import build from './lang/build'
 
 export const typeDefs = gql`
 type User {
@@ -18,6 +19,7 @@ type Vocab {
   stem: String
   lang: String
   title: String
+  build: Boolean
   links: [String!]
   delete: Boolean
 }
@@ -30,6 +32,7 @@ input VocabInput {
   stem: String
   lang: String
   title: String
+  build: Boolean
   links: [String!]
   delete: Boolean
 }
@@ -92,6 +95,7 @@ type Query {
 type Mutation {
   upsertVocabs (vocabs: [VocabInput]!) : [Vocab]
   updateVocab (vocab: VocabInput!) : Vocab
+  buildVocabs: [Vocab]
   updateCard (card: CardInput!) : Card
   createList (list: ListInput!) : List
   updateStems (id: ID!) : List
@@ -118,6 +122,12 @@ export const resolvers = {
   Mutation: {
     upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs),
     updateVocab: (_, { vocab }) => Vocab.update(vocab),
+    buildVocabs: async () => {
+      const _vocabs = await Vocab.find({ delete: { $ne: true } })
+      const vocabs = _vocabs.filter(vocab => vocab.build !== true)
+      build(vocabs)
+      return vocabs
+    },
     updateCard: (_, { card }) => Card.update(card),
     createList: (_, { list }) => List.upsert(list),
     updateStems: async (_, { id }) => {
