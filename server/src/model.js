@@ -33,7 +33,8 @@ const word = Schema({
   link: String,
   word: String,
   example: String,
-  definition: String
+  definition: String,
+  text: String
 })
 
 export const Word = Factory(db, 'Word', word)

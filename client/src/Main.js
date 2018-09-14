@@ -16,6 +16,7 @@ import {
 import HomeIcon from '@material-ui/icons/Home'
 
 import Vocab from './containers/Vocab'
+import Search from './containers/Search'
 import Lists from './containers/Lists'
 import WordList from './containers/List'
 
@@ -78,6 +79,12 @@ function Main (props) {
         }}
       >
         <div className={classes.toolbar} />
+        <List>
+          <ListItem component={Link} to={'/search'} button>
+            <ListItemText primary='Search' />
+          </ListItem>
+        </List>
+        <Divider />
         <Lists />
         <Divider />
         <List>
@@ -89,6 +96,7 @@ function Main (props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Route exact path='/' component={Vocab} />
+        <Route path='/search' component={Search} />
         <Route path='/lists/:id' component={WordList} />
       </main>
     </div>

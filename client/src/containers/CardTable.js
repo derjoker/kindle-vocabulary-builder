@@ -44,7 +44,7 @@ class CardTableContainer extends Component {
                       variables: { card },
                       optimisticResponse: {
                         updateCard: {
-                          ...find(data, { id: card.id }),
+                          ...find(listCards, { id: card.id }),
                           ...card
                         }
                       }

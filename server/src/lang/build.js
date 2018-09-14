@@ -1,5 +1,6 @@
 import { flatten, uniq, difference } from 'lodash'
 import hash from 'object-hash'
+import { load } from 'cheerio'
 
 import { Vocab, Word } from '../model'
 import search from './search'
@@ -19,6 +20,7 @@ export default async function build (vocabs) {
             pair.link = word.link
             pair.word = word.word
             pair.id = hash(pair)
+            pair.text = load(pair.example).text()
             return pair
           })
         )

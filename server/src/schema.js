@@ -43,6 +43,7 @@ type Word {
   word: String
   example: String
   definition: String
+  text: String
 }
 
 enum Category {
@@ -90,6 +91,7 @@ input ListInput {
 type Query {
   vocabs: [Vocab]
   vocabIds: [ID!]
+  words (text: String!): [Word]
   lists: [List]
   list (id: ID!): List
   listCards (id: ID!, offset: Int, limit: Int): [Card]
@@ -112,6 +114,8 @@ export const resolvers = {
       const vocabs = await Vocab.find({})
       return vocabs.map(vocab => vocab.id)
     },
+    words: (_, { text }) =>
+      Word.find({ text: { $regex: text, $options: 'i' } }).limit(100),
     lists: () => List.find({}),
     list: (_, { id }) => List.findById(id),
     listCards: async (_, { id, offset, limit }) => {
@@ -129,8 +133,11 @@ export const resolvers = {
     upsertVocabs: (_, { vocabs }) => Vocab.upsert(vocabs),
     updateVocab: (_, { vocab }) => Vocab.update(vocab),
     buildVocabs: async () => {
-      const _vocabs = await Vocab.find({ delete: { $ne: true } })
-      const vocabs = _vocabs.filter(vocab => vocab.build !== true)
+      const vocabs = await Vocab.find({
+        delete: { $ne: true },
+        build: { $ne: true }
+      })
+      // console.log(vocabs)
       build(vocabs)
       return vocabs
     },

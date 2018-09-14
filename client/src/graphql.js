@@ -50,6 +50,18 @@ mutation BuildVocabs {
 }
 `
 
+export const WORDS_QUERY = gql`
+query Words ($text: String!) {
+  words (text: $text) {
+    id
+    link
+    word
+    example
+    definition
+  }
+}
+`
+
 export const UPDATE_CARD = gql`
 mutation UpdateCard ($card: CardInput!) {
   updateCard (card: $card) {
