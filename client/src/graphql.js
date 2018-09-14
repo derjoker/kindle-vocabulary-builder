@@ -76,6 +76,7 @@ export const CREATE_LIST = gql`
 mutation CreateList ($list: ListInput!) {
   createList (list: $list) {
     id
+    name
   }
 }
 `

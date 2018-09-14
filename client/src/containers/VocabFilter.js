@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 import { flatten } from 'lodash'
 
-import { CREATE_LIST } from '../graphql'
+import { CREATE_LIST, LISTS_QUERY } from '../graphql'
 
 const styles = theme => ({
   container: {
@@ -110,6 +110,7 @@ class VocabFilter extends Component {
           open={this.state.open}
           onClose={this.handleClose}
           aria-labelledby='form-dialog-title'
+          fullWidth
         >
           <DialogTitle id='form-dialog-title'>List Name</DialogTitle>
           <DialogContent>
@@ -126,7 +127,20 @@ class VocabFilter extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Mutation mutation={CREATE_LIST}>
+            <Mutation
+              mutation={CREATE_LIST}
+              update={(cache, { data: { createList } }) => {
+                const { lists } = cache.readQuery({
+                  query: LISTS_QUERY
+                })
+                lists.push(createList)
+                console.log(lists)
+                cache.writeQuery({
+                  query: LISTS_QUERY,
+                  data: { lists }
+                })
+              }}
+            >
               {createList => (
                 <div>
                   <Button onClick={this.handleClose} color='primary'>
