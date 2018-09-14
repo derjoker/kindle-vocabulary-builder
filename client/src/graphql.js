@@ -85,17 +85,23 @@ query List ($id: ID!) {
     lang
     title
     stems
-    cards {
-      id
-      word {
-        link
-        word
-        example
-        definition
-      }
-      note
-      category
+    count
+  }
+}
+`
+
+export const LIST_CARDS_QUERY = gql`
+query ListCards ($id: ID!, $offset: Int, $limit: Int) {
+  listCards (id: $id, offset: $offset, limit: $limit) {
+    id
+    word {
+      link
+      word
+      example
+      definition
     }
+    note
+    category
   }
 }
 `

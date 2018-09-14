@@ -62,7 +62,7 @@ type Card {
 }
 
 input CardInput {
-  id: ID!
+  id: ID
   wordId: ID
   note: String
   category: String
@@ -75,7 +75,7 @@ type List {
   title: String
   filter: String
   stems: [String]
-  cards: [Card]
+  count: Int
 }
 
 input ListInput {
@@ -91,7 +91,8 @@ type Query {
   vocabs: [Vocab]
   vocabIds: [ID!]
   lists: [List]
-  list(id: ID!): List
+  list (id: ID!): List
+  listCards (id: ID!, offset: Int, limit: Int): [Card]
 }
 
 type Mutation {
@@ -112,10 +113,14 @@ export const resolvers = {
       return vocabs.map(vocab => vocab.id)
     },
     lists: () => List.find({}),
-    list: (_, { id }) => List.findById(id)
+    list: (_, { id }) => List.findById(id),
+    listCards: async (_, { id, offset, limit }) => {
+      const list = await List.findById(id)
+      return Card.fetch(list.cardIds.slice(offset, offset + limit))
+    }
   },
   List: {
-    cards: list => Card.fetch(list.cardIds)
+    count: list => list.cardIds.length
   },
   Card: {
     word: card => Word.findById(card.wordId)

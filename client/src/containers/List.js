@@ -10,25 +10,27 @@ class WordList extends Component {
   render () {
     const { id } = this.props.match.params
     return (
-      <Query query={LIST_QUERY} variables={{ id }}>
-        {({ loading, data }) => {
-          console.log(data)
-          if (loading) return <div />
+      <div>
+        <ListBuilder id={id} />
+        <Query query={LIST_QUERY} variables={{ id }}>
+          {({ loading, data }) => {
+            console.log(data)
+            if (loading) return <div />
 
-          const { lang, title, stems, cards } = data.list
+            const { lang, title, stems, count } = data.list
 
-          return (
-            <div>
-              <ListBuilder id={id} />
-              <div>{lang}</div>
-              <div>{title}</div>
-              <div>stems: {stems.length}</div>
-              <div>cards: {cards.length}</div>
-              <CardTable data={cards} />
-            </div>
-          )
-        }}
-      </Query>
+            return (
+              <div>
+                <div>{lang}</div>
+                <div>{title}</div>
+                <div>stems: {stems.length}</div>
+                <div>cards: {count}</div>
+                <CardTable id={id} count={count} />
+              </div>
+            )
+          }}
+        </Query>
+      </div>
     )
   }
 }
