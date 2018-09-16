@@ -20,6 +20,7 @@ class CardExporter extends Component {
                 `<p>${card.word.definition}</p>`
               ]
               if (card.note) anki.push(`<p>${card.note}</p>`)
+              else anki.push('')
               return anki
             }),
             (error, output) => {
