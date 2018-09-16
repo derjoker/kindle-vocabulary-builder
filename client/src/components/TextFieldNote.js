@@ -6,7 +6,7 @@ import { isNull } from 'lodash'
 class TextFieldNote extends Component {
   constructor (props) {
     super(props)
-    const value = this.props.data.note || undefined
+    const value = this.props.data.note || ''
     this.state = {
       value
     }

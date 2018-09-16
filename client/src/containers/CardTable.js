@@ -4,7 +4,7 @@ import { find } from 'lodash'
 
 import CardTable from '../components/CardTable'
 
-import { LIST_CARDS_QUERY, UPDATE_CARD } from '../graphql'
+import { LIST_CARDS_OLD_QUERY, UPDATE_CARD } from '../graphql'
 
 class CardTableContainer extends Component {
   constructor (props) {
@@ -19,18 +19,18 @@ class CardTableContainer extends Component {
     const { offset, limit } = this.state
     const { id, count } = this.props
     return (
-      <Query query={LIST_CARDS_QUERY} variables={{ id, offset, limit }}>
+      <Query query={LIST_CARDS_OLD_QUERY} variables={{ id, offset, limit }}>
         {({ loading, data }) => {
           console.log(data)
           if (loading) return <div />
 
-          const { listCards } = data
+          const { listCardsOld } = data
 
           return (
             <Mutation mutation={UPDATE_CARD}>
               {updateCard => (
                 <CardTable
-                  data={listCards}
+                  data={listCardsOld}
                   count={count}
                   page={offset}
                   rowsPerPage={limit}
@@ -44,7 +44,7 @@ class CardTableContainer extends Component {
                       variables: { card },
                       optimisticResponse: {
                         updateCard: {
-                          ...find(listCards, { id: card.id }),
+                          ...find(listCardsOld, { id: card.id }),
                           ...card
                         }
                       }

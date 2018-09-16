@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server'
-import { uniq, flatten } from 'lodash'
+import { uniq, flatten, sampleSize } from 'lodash'
 import hash from 'object-hash'
 
 import { Vocab, Word, Card, List } from './model'
@@ -94,7 +94,8 @@ type Query {
   words (text: String!): [Word]
   lists: [List]
   list (id: ID!): List
-  listCards (id: ID!, offset: Int, limit: Int): [Card]
+  listCards (id: ID!, limit: Int): [Card]
+  listCardsOld (id: ID!, offset: Int, limit: Int): [Card]
 }
 
 type Mutation {
@@ -118,7 +119,11 @@ export const resolvers = {
       Word.find({ text: { $regex: text, $options: 'i' } }).limit(100),
     lists: () => List.find({}),
     list: (_, { id }) => List.findById(id),
-    listCards: async (_, { id, offset, limit }) => {
+    listCards: async (_, { id, limit = 100 }) => {
+      const list = await List.findById(id)
+      return Card.fetch(sampleSize(list.cardIds, limit))
+    },
+    listCardsOld: async (_, { id, offset, limit }) => {
       const list = await List.findById(id)
       return Card.fetch(list.cardIds.slice(offset, offset + limit))
     }

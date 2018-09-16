@@ -104,8 +104,24 @@ query List ($id: ID!) {
 `
 
 export const LIST_CARDS_QUERY = gql`
-query ListCards ($id: ID!, $offset: Int, $limit: Int) {
-  listCards (id: $id, offset: $offset, limit: $limit) {
+query ListCards ($id: ID!, $limit: Int) {
+  listCards (id: $id, limit: $limit) {
+    id
+    word {
+      link
+      word
+      example
+      definition
+    }
+    note
+    category
+  }
+}
+`
+
+export const LIST_CARDS_OLD_QUERY = gql`
+query ListCardsOld ($id: ID!, $offset: Int, $limit: Int) {
+  listCardsOld (id: $id, offset: $offset, limit: $limit) {
     id
     word {
       link
