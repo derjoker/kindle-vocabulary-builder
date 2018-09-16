@@ -135,6 +135,20 @@ query ListCardsOld ($id: ID!, $offset: Int, $limit: Int) {
 }
 `
 
+export const EXPORT_CARDS = gql`
+mutation ExportCards ($id: ID!) {
+  exportCards (id: $id) {
+    word {
+      link
+      word
+      example
+      definition
+    }
+    note
+  }
+}
+`
+
 export const UPDATE_STEMS = gql`
 mutation UpdateStems ($id: ID!) {
   updateStems (id: $id) {

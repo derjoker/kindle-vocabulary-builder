@@ -76,7 +76,9 @@ class WordCard extends Component {
       <Card className={classes.card}>
         <CardContent>
           <Typography variant='headline' component='h3' color='textSecondary'>
-            {card.word.word}
+            {card.category
+              ? `${card.word.word} (${card.category})`
+              : card.word.word}
           </Typography>
           <br />
           <Typography

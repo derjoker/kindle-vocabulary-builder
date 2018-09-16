@@ -103,6 +103,7 @@ type Mutation {
   updateVocab (vocab: VocabInput!) : Vocab
   buildVocabs: [Vocab]
   updateCard (card: CardInput!) : Card
+  exportCards (id: ID!) : [Card]
   createList (list: ListInput!) : List
   updateStems (id: ID!) : List
 }
@@ -147,6 +148,17 @@ export const resolvers = {
       return vocabs
     },
     updateCard: (_, { card }) => Card.update(card),
+    exportCards: async (_, { id }) => {
+      const list = await List.findById(id)
+      const cards = await Card.fetch(list.cardIds)
+      const _cards = cards
+        .filter(card => card.category === 'LEARN')
+        .map(card => {
+          card.category = 'STAGED'
+          return card
+        })
+      return Card.update(_cards)
+    },
     createList: (_, { list }) => List.upsert(list),
     updateStems: async (_, { id }) => {
       const list = await List.findById(id)
