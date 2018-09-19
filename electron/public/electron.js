@@ -1,8 +1,14 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const usbDetect = require('usb-detection')
 const path = require('path')
+const glob = require('glob')
 
 const isDev = require('electron-is-dev')
+
+let kindles = 0
+const KINDLE_VENDORID = 6473
+const KINDLE_PRODUCTID = 4
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -10,7 +16,11 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600 })
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    titleBarStyle: 'hidden'
+  })
 
   // and load the index.html of the app.
   if (isDev) {
@@ -21,6 +31,29 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  usbDetect.startMonitoring()
+
+  usbDetect.find(KINDLE_VENDORID, KINDLE_PRODUCTID, (error, devices) => {
+    if (!error) {
+      kindles = devices.length
+      mainWindow.webContents.send('kindles', kindles)
+    }
+  })
+
+  usbDetect.on(`add:${KINDLE_VENDORID}:${KINDLE_PRODUCTID}`, device => {
+    kindles += 1
+    mainWindow.webContents.send('kindles', kindles)
+  })
+
+  usbDetect.on(`remove:${KINDLE_VENDORID}:${KINDLE_PRODUCTID}`, device => {
+    kindles -= 1
+    mainWindow.webContents.send('kindles', kindles)
+  })
+
+  ipcMain.on('kindles', event => {
+    event.returnValue = kindles
+  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -55,3 +88,7 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+const files = glob.sync(path.join(__dirname, '../src/main/**/*.js'))
+files.forEach(file => {
+  require(file)
+})

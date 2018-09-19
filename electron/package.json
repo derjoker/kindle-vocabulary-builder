@@ -10,20 +10,24 @@
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
+    "rebuild": "electron-rebuild",
     "build": "npm run react-build && npm run electron-build",
     "start": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
+    "better-sqlite3": "^4.1.4",
     "electron-is-dev": "^0.3.0",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
-    "react-scripts": "1.1.5"
+    "react-scripts": "1.1.5",
+    "usb-detection": "^3.2.0"
   },
   "devDependencies": {
     "concurrently": "^4.0.1",
     "cross-env": "^5.2.0",
     "electron": "^2.0.9",
     "electron-builder": "^20.28.4",
+    "electron-rebuild": "^1.8.2",
     "wait-on": "^3.0.1"
   },
   "standard": {
