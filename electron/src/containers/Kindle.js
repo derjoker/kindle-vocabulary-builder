@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { Button } from '@material-ui/core'
+
+import VocabTable from './VocabTable'
 
 const { ipcRenderer } = window.require('electron')
 
@@ -6,7 +9,8 @@ class Kindle extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      kindle: false
+      kindle: false,
+      vocabs: []
     }
   }
 
@@ -24,24 +28,27 @@ class Kindle extends Component {
       })
     })
 
-    ipcRenderer.on('kindle-loaded', (event, arg) => {
-      console.log(event, arg)
+    ipcRenderer.on('kindle-loaded', (_, vocabs) => {
+      this.setState({
+        vocabs: this.state.vocabs.concat(vocabs)
+      })
     })
   }
 
   render () {
-    const { kindle } = this.state
+    const { kindle, vocabs } = this.state
     return (
       <div>
-        <p>Vocabs</p>
-        <button
+        <Button
           disabled={!kindle}
           onClick={() => {
             ipcRenderer.send('kindle-load')
           }}
         >
           Kindle
-        </button>
+        </Button>
+        <Button>Look Up</Button>
+        <VocabTable data={vocabs} />
       </div>
     )
   }
