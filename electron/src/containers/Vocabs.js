@@ -2,11 +2,10 @@ import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { Stitch } from 'mongodb-stitch-browser-sdk'
+import isElectron from 'is-electron'
 
 import VocabTable from './VocabTable'
 import VocabFilter from './VocabFilter'
-
-const { ipcRenderer } = window.require('electron')
 
 class Vocabs extends Component {
   constructor (props) {
@@ -29,33 +28,35 @@ class Vocabs extends Component {
       const _stems = stems.slice(offset, offset + MAX)
       await this.client.callFunction('insertLinks', [lang, _stems])
       const links = await this.client.callFunction('nilLinks', [lang, _stems])
-      ipcRenderer.send('lookup', links)
+      window.ipcRenderer.send('lookup', links)
     }
   }
 
   componentWillMount () {
-    const kindles = ipcRenderer.sendSync('kindles')
+    const kindles = isElectron() ? window.ipcRenderer.sendSync('kindles') : 0
     this.setState({
       kindle: kindles > 0
     })
   }
 
   componentDidMount () {
-    ipcRenderer.on('kindles', (_, kindles) => {
-      this.setState({
-        kindle: kindles > 0
+    if (isElectron()) {
+      window.ipcRenderer.on('kindles', (_, kindles) => {
+        this.setState({
+          kindle: kindles > 0
+        })
       })
-    })
 
-    ipcRenderer.on('lookup-links', (_, links) => {
-      console.log(links)
-      this.client.callFunction('updateLinks', [links])
-    })
+      window.ipcRenderer.on('lookup-links', (_, links) => {
+        console.log(links)
+        this.client.callFunction('updateLinks', [links])
+      })
 
-    ipcRenderer.on('lookup-words', (_, words) => {
-      console.log(words)
-      this.client.callFunction('insertWords', [words])
-    })
+      window.ipcRenderer.on('lookup-words', (_, words) => {
+        console.log(words)
+        this.client.callFunction('insertWords', [words])
+      })
+    }
   }
 
   render () {

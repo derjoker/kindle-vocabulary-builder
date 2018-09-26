@@ -12,7 +12,7 @@
     "electron-build": "electron-builder",
     "rebuild": "electron-rebuild",
     "build": "npm run react-build && npm run electron-build",
-    "start": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
     "@material-ui/core": "^3.0.1",
@@ -20,6 +20,7 @@
     "better-sqlite3": "^4.1.4",
     "crawler": "^1.2.0",
     "electron-is-dev": "^0.3.0",
+    "is-electron": "^2.1.0",
     "lodash": "^4.17.11",
     "mongodb-stitch-browser-sdk": "^4.0.13",
     "react": "^16.5.1",
@@ -31,7 +32,6 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1",
-    "cross-env": "^5.2.0",
     "electron": "^2.0.9",
     "electron-builder": "^20.28.4",
     "electron-rebuild": "^1.8.2",

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { differenceBy } from 'lodash'
 import { Stitch, RemoteMongoClient } from 'mongodb-stitch-browser-sdk'
+import isElectron from 'is-electron'
 
 import VocabTable from './VocabTable'
-
-const { ipcRenderer } = window.require('electron')
 
 class Kindle extends Component {
   constructor (props) {
@@ -22,31 +21,33 @@ class Kindle extends Component {
   }
 
   componentWillMount () {
-    ipcRenderer.send('kindle-load')
+    if (isElectron()) window.ipcRenderer.send('kindle-load')
   }
 
   componentDidMount () {
-    ipcRenderer.on('kindle-loaded', async (_, vocabs) => {
-      const ids = await this.Vocab
-        .find({ owner_id: this.owner_id }, { projection: { _id: 1 } })
-        .asArray()
+    if (isElectron()) {
+      window.ipcRenderer.on('kindle-loaded', async (_, vocabs) => {
+        const ids = await this.Vocab
+          .find({ owner_id: this.owner_id }, { projection: { _id: 1 } })
+          .asArray()
 
-      const _vocabs = differenceBy(vocabs, ids, '_id')
+        const _vocabs = differenceBy(vocabs, ids, '_id')
 
-      const MAX = 100
-      for (let offset = 0; offset < _vocabs.length; offset += MAX) {
-        const result = await this.Vocab.insertMany(
-          _vocabs.slice(offset, offset + MAX).map(vocab => {
-            vocab.owner_id = this.owner_id
-            return vocab
-          })
-        )
-        console.log(result)
-      }
-      this.setState({
-        vocabs: this.state.vocabs.concat(_vocabs)
+        const MAX = 100
+        for (let offset = 0; offset < _vocabs.length; offset += MAX) {
+          const result = await this.Vocab.insertMany(
+            _vocabs.slice(offset, offset + MAX).map(vocab => {
+              vocab.owner_id = this.owner_id
+              return vocab
+            })
+          )
+          console.log(result)
+        }
+        this.setState({
+          vocabs: this.state.vocabs.concat(_vocabs)
+        })
       })
-    })
+    }
   }
 
   render () {
