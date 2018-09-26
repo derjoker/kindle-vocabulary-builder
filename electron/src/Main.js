@@ -13,14 +13,20 @@ import {
   Typography
 } from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
+import { Stitch } from 'mongodb-stitch-browser-sdk'
 
+import Auth from './containers/Auth'
+import Vocabs from './containers/Vocabs'
 import Kindle from './containers/Kindle'
+import Login from './containers/Login'
 
 const Play = () => <div>Play</div>
 const Search = () => <div>Search</div>
 const Lists = () => <div>Lists</div>
 
-const drawerWidth = 240
+Stitch.initializeDefaultAppClient(process.env.REACT_APP_STITCH_APP_KEY)
+
+const drawerWidth = 180
 
 const styles = theme => ({
   root: {
@@ -30,6 +36,9 @@ const styles = theme => ({
     overflow: 'hidden',
     position: 'relative',
     display: 'flex'
+  },
+  grow: {
+    flexGrow: 1
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1
@@ -52,6 +61,14 @@ const styles = theme => ({
 })
 
 class Main extends Component {
+  constructor (props) {
+    super(props)
+    this.client = Stitch.defaultAppClient
+    this.state = {
+      isAuthed: this.client.auth.isLoggedIn
+    }
+  }
+
   render () {
     const { classes } = this.props
     return (
@@ -66,9 +83,15 @@ class Main extends Component {
             >
               <HomeIcon />
             </IconButton>
-            <Typography variant='title' color='inherit' noWrap>
+            <Typography
+              variant='title'
+              color='inherit'
+              className={classes.grow}
+              noWrap
+            >
               Kindle Vocabulary Builder
             </Typography>
+            <Auth />
           </Toolbar>
         </AppBar>
         <Drawer
@@ -94,8 +117,8 @@ class Main extends Component {
             </ListItem>
           </List>
           <List>
-            <ListItem component={Link} to={'/kindle'} button>
-              <ListItemText primary='Kindle' />
+            <ListItem component={Link} to={'/vocabs'} button>
+              <ListItemText primary='Vocabs' />
             </ListItem>
           </List>
         </Drawer>
@@ -105,7 +128,9 @@ class Main extends Component {
           <Route path='/play' component={Play} />
           <Route path='/search' component={Search} />
           <Route path='/lists' component={Lists} />
-          <Route path='/kindle' component={Kindle} />
+          <Route exact path='/vocabs' component={Vocabs} />
+          <Route path='/vocabs/kindle' component={Kindle} />
+          <Route path='/login' component={Login} />
         </main>
       </div>
     )

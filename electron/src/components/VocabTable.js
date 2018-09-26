@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Tooltip,
   IconButton
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -21,7 +22,7 @@ const styles = theme => ({
     overflowX: 'auto'
   },
   table: {
-    minWidth: 700
+    minWidth: 800
   },
   row: {
     '&:nth-of-type(odd)': {
@@ -38,7 +39,6 @@ class VocabTable extends Component {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Usage</TableCell>
               <TableCell>Word</TableCell>
               <TableCell>Stem</TableCell>
               <TableCell>Lang</TableCell>
@@ -49,11 +49,12 @@ class VocabTable extends Component {
           <TableBody>
             {data.map(vocab => {
               return (
-                <TableRow className={classes.row} key={vocab.id}>
+                <TableRow className={classes.row} key={vocab._id}>
                   <TableCell component='th' scope='row'>
-                    {vocab.usage}
+                    <Tooltip title={vocab.usage} placement='top'>
+                      <span>{vocab.word}</span>
+                    </Tooltip>
                   </TableCell>
-                  <TableCell>{vocab.word}</TableCell>
                   <TableCell>
                     <TextFieldStem data={vocab} save={save} />
                   </TableCell>

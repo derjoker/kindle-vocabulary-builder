@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Button } from '@material-ui/core'
+import { differenceBy } from 'lodash'
+import { Stitch, RemoteMongoClient } from 'mongodb-stitch-browser-sdk'
 
 import VocabTable from './VocabTable'
 
@@ -8,46 +9,50 @@ const { ipcRenderer } = window.require('electron')
 class Kindle extends Component {
   constructor (props) {
     super(props)
+    const client = Stitch.defaultAppClient
+    const db = client
+      .getServiceClient(RemoteMongoClient.factory, 'mongodb-atlas')
+      .db(process.env.REACT_APP_DB_NAME)
+    this.owner_id = client.auth.user.id
+    this.Vocab = db.collection('vocabs')
     this.state = {
-      kindle: false,
-      vocabs: []
+      vocabs: [],
+      ids: []
     }
   }
 
   componentWillMount () {
-    const kindles = ipcRenderer.sendSync('kindles')
-    this.setState({
-      kindle: kindles > 0
-    })
+    ipcRenderer.send('kindle-load')
   }
 
   componentDidMount () {
-    ipcRenderer.on('kindles', (_, kindles) => {
-      this.setState({
-        kindle: kindles > 0
-      })
-    })
+    ipcRenderer.on('kindle-loaded', async (_, vocabs) => {
+      const ids = await this.Vocab
+        .find({ owner_id: this.owner_id }, { projection: { _id: 1 } })
+        .asArray()
 
-    ipcRenderer.on('kindle-loaded', (_, vocabs) => {
+      const _vocabs = differenceBy(vocabs, ids, '_id')
+
+      const MAX = 100
+      for (let offset = 0; offset < _vocabs.length; offset += MAX) {
+        const result = await this.Vocab.insertMany(
+          _vocabs.slice(offset, offset + MAX).map(vocab => {
+            vocab.owner_id = this.owner_id
+            return vocab
+          })
+        )
+        console.log(result)
+      }
       this.setState({
-        vocabs: this.state.vocabs.concat(vocabs)
+        vocabs: this.state.vocabs.concat(_vocabs)
       })
     })
   }
 
   render () {
-    const { kindle, vocabs } = this.state
+    const { vocabs } = this.state
     return (
       <div>
-        <Button
-          disabled={!kindle}
-          onClick={() => {
-            ipcRenderer.send('kindle-load')
-          }}
-        >
-          Kindle
-        </Button>
-        <Button>Look Up</Button>
         <VocabTable data={vocabs} />
       </div>
     )
