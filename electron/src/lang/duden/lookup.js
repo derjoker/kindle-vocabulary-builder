@@ -10,5 +10,7 @@ module.exports = function lookup ($) {
         text.endsWith('veraltet ' + word)
       )
     })
-    .map(link => link.attribs.href)
+    .map(link => ({
+      link: link.attribs.href
+    }))
 }

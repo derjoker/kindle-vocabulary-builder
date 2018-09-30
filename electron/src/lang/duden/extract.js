@@ -1,5 +1,3 @@
-const { flatten } = require('lodash')
-
 module.exports = function extract ($) {
   const word = $('section#block-system-main > h1').text().replace(/\u00AD/g, '')
   // console.log(word)
@@ -9,7 +7,7 @@ module.exports = function extract ($) {
   // console.log(frequency)
   // if (frequency < 3) return
 
-  const pairs = $('section.term-section').toArray().map(section => {
+  const definitions = $('section.term-section').toArray().map(section => {
     const parent = $(section.parentNode).clone()
     parent.children('figure').remove()
     parent.children('section').remove()
@@ -38,7 +36,10 @@ module.exports = function extract ($) {
             examples = []
             break
           case 'ul':
-            examples = $(child).children().toArray().map(li => $(li).html())
+            examples = $(child)
+              .children()
+              .toArray()
+              .map(li => $.load(li).html())
             break
           default:
             examples = [clone.html()]
@@ -49,15 +50,17 @@ module.exports = function extract ($) {
     // console.log(definition)
     // console.log(examples)
 
-    return examples.map(example => ({
-      example,
+    return {
       definition,
-      text: $.load(example).text()
-    }))
+      examples: examples.map(example => ({
+        example,
+        text: $.load(example).text()
+      }))
+    }
   })
 
   return {
     word,
-    pairs: flatten(pairs)
+    definitions
   }
 }

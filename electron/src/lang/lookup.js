@@ -1,42 +1,25 @@
-const { URL } = require('url')
-const Crawler = require('crawler')
-
 const duden = require('./duden')
 
-module.exports = function lookup (links, done) {
-  const queues = links
-    .map(link => {
-      let uri
-      let parse = () => {}
-      switch (link.lang) {
-        case 'de':
-          uri = new URL('https://www.duden.de/suchen/dudenonline/' + link.stem)
-          parse = duden.lookup
-          break
-      }
+const lookups = {
+  duden
+}
 
-      function callback (error, response, done) {
-        if (error) {
-          // console.log(error)
-        } else if (response.statusCode !== 200) {
-          // console.log(response)
-        } else {
-          const _links = parse(response.$)
-          console.log(_links)
-          link.links = _links
-        }
-        done()
-      }
+module.exports = function lookup (lang, dict, stems) {
+  const words = stems.map(stem => ({
+    lang,
+    dict,
+    stem
+  }))
 
-      return { uri, callback }
-    })
-    .filter(queue => queue.uri)
+  const lookup = lookups[dict]
 
-  const crawler = new Crawler()
-
-  crawler.queue(queues)
-
-  crawler.on('drain', () => {
-    done()
+  return new Promise((resolve, reject) => {
+    if (lookup) {
+      lookup(words, () => {
+        resolve(words)
+      })
+    } else {
+      reject(new Error('Dict Not Supported Yet.'))
+    }
   })
 }
