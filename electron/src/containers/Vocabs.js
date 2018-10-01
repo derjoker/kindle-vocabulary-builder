@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
-import { Link } from 'react-router-dom'
 import { Stitch } from 'mongodb-stitch-browser-sdk'
 import isElectron from 'is-electron'
 
@@ -12,7 +11,6 @@ class Vocabs extends Component {
     super(props)
     this.client = Stitch.defaultAppClient
     this.state = {
-      kindle: false,
       lang: '',
       vocabs: []
     }
@@ -32,21 +30,8 @@ class Vocabs extends Component {
     }
   }
 
-  componentWillMount () {
-    const kindles = isElectron() ? window.ipcRenderer.sendSync('kindles') : 0
-    this.setState({
-      kindle: kindles > 0
-    })
-  }
-
   componentDidMount () {
     if (isElectron()) {
-      window.ipcRenderer.on('kindles', (_, kindles) => {
-        this.setState({
-          kindle: kindles > 0
-        })
-      })
-
       window.ipcRenderer.on('lookup-links', (_, links) => {
         console.log(links)
         this.client.callFunction('updateLinks', [links])
@@ -60,12 +45,9 @@ class Vocabs extends Component {
   }
 
   render () {
-    const { kindle, vocabs } = this.state
+    const { vocabs } = this.state
     return (
       <div>
-        <Button disabled={!kindle} component={Link} to='/vocabs/kindle'>
-          Kindle
-        </Button>
         <VocabFilter
           search={condition => {
             this.client.callFunction('findVocabs', [condition]).then(vocabs => {

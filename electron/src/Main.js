@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
 import { Stitch } from 'mongodb-stitch-browser-sdk'
+import isElectron from 'is-electron'
 
 import Auth from './containers/Auth'
 import Vocabs from './containers/Vocabs'
@@ -65,7 +66,25 @@ class Main extends Component {
     super(props)
     this.client = Stitch.defaultAppClient
     this.state = {
-      isAuthed: this.client.auth.isLoggedIn
+      isAuthed: this.client.auth.isLoggedIn,
+      kindle: false
+    }
+  }
+
+  componentWillMount () {
+    const kindles = isElectron() ? window.ipcRenderer.sendSync('kindles') : 0
+    this.setState({
+      kindle: kindles > 0
+    })
+  }
+
+  componentDidMount () {
+    if (isElectron()) {
+      window.ipcRenderer.on('kindles', (_, kindles) => {
+        this.setState({
+          kindle: kindles > 0
+        })
+      })
     }
   }
 
@@ -121,6 +140,12 @@ class Main extends Component {
               <ListItemText primary='Vocabs' />
             </ListItem>
           </List>
+          {this.state.kindle &&
+            <List>
+              <ListItem component={Link} to={'/kindle'} button>
+                <ListItemText primary='Kindle' />
+              </ListItem>
+            </List>}
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
@@ -128,8 +153,8 @@ class Main extends Component {
           <Route path='/play' component={Play} />
           <Route path='/search' component={Search} />
           <Route path='/lists' component={Lists} />
-          <Route exact path='/vocabs' component={Vocabs} />
-          <Route path='/vocabs/kindle' component={Kindle} />
+          <Route path='/vocabs' component={Vocabs} />
+          {isElectron() && <Route path='/kindle' component={Kindle} />}
           <Route path='/login' component={Login} />
         </main>
       </div>

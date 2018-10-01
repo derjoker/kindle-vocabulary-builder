@@ -12,7 +12,7 @@ class Kindle extends Component {
     const db = client
       .getServiceClient(RemoteMongoClient.factory, 'mongodb-atlas')
       .db(process.env.REACT_APP_DB_NAME)
-    this.owner_id = client.auth.user.id
+    this.user_id = client.auth.user.id
     this.Vocab = db.collection('vocabs')
     this.state = {
       vocabs: [],
@@ -21,40 +21,40 @@ class Kindle extends Component {
   }
 
   componentWillMount () {
-    if (isElectron()) window.ipcRenderer.send('kindle-load')
+    if (isElectron() && window.ipcRenderer.sendSync('kindles')) { window.ipcRenderer.send('kindle-load') }
   }
 
   componentDidMount () {
     if (isElectron()) {
-      window.ipcRenderer.on('kindle-loaded', async (_, vocabs) => {
+      window.ipcRenderer.on('kindle-loaded', async (_, _vocabs) => {
         const ids = await this.Vocab
-          .find({ owner_id: this.owner_id }, { projection: { _id: 1 } })
+          .find({ user_id: this.user_id }, { projection: { _id: 1 } })
           .asArray()
 
-        const _vocabs = differenceBy(vocabs, ids, '_id')
+        const vocabs = differenceBy(_vocabs, ids, '_id')
+
+        this.setState({
+          vocabs
+        })
 
         const MAX = 100
-        for (let offset = 0; offset < _vocabs.length; offset += MAX) {
+        for (let offset = 0; offset < vocabs.length; offset += MAX) {
           const result = await this.Vocab.insertMany(
-            _vocabs.slice(offset, offset + MAX).map(vocab => {
-              vocab.owner_id = this.owner_id
+            vocabs.slice(offset, offset + MAX).map(vocab => {
+              vocab.user_id = this.user_id
               return vocab
             })
           )
           console.log(result)
         }
-        this.setState({
-          vocabs: this.state.vocabs.concat(_vocabs)
-        })
       })
     }
   }
 
   render () {
-    const { vocabs } = this.state
     return (
       <div>
-        <VocabTable data={vocabs} />
+        <VocabTable data={this.state.vocabs} />
       </div>
     )
   }

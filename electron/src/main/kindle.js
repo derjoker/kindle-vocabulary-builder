@@ -9,7 +9,11 @@ ipcMain.on('kindle-load', event => {
   const vocabs = db
     .prepare(
       `
-      SELECT LOOKUPS.id AS _id, LOOKUPS.usage, WORDS.word, WORDS.stem, WORDS.lang, BOOK_INFO.title FROM LOOKUPS
+      SELECT
+      LOOKUPS.id AS _id, LOOKUPS.timestamp, LOOKUPS.usage,
+      WORDS.word, WORDS.stem, WORDS.lang,
+      BOOK_INFO.title
+      FROM LOOKUPS
       JOIN WORDS
       ON LOOKUPS.word_key = WORDS.id
       JOIN BOOK_INFO
