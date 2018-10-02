@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import {
-  MenuItem,
   TextField,
   Button,
   Dialog,
@@ -13,8 +12,6 @@ import {
 import { Stitch } from 'mongodb-stitch-browser-sdk'
 
 import TextFieldTitle from '../components/TextFieldTitle'
-
-const Langs = ['de']
 
 const styles = theme => ({
   container: {
@@ -38,7 +35,6 @@ class VocabFilter extends Component {
     this.state = {
       open: false,
       name: '',
-      lang: '',
       title: '',
       titles: []
     }
@@ -54,44 +50,24 @@ class VocabFilter extends Component {
     this.setState({ open: false })
   }
 
+  componentWillMount () {
+    const { lang } = this.props
+    this.client.callFunction('titles', [lang]).then(titles => {
+      this.setState({
+        titles: titles.map(option => ({
+          value: option,
+          label: option
+        }))
+      })
+    })
+  }
+
   render () {
-    const { lang, title, titles } = this.state
-    const { classes } = this.props
+    const { lang } = this.props
+    const { title, titles } = this.state
 
     return (
       <form>
-        <TextField
-          select
-          label='Lang'
-          className={classes.textField}
-          value={lang}
-          onChange={event => {
-            const lang = event.target.value
-            this.setState({
-              lang
-            })
-            this.client.callFunction('titles', [lang]).then(titles => {
-              this.setState({
-                titles: titles.map(option => ({
-                  value: option,
-                  label: option
-                }))
-              })
-            })
-          }}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu
-            }
-          }}
-          margin='normal'
-        >
-          {Langs.map(option => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
         <TextFieldTitle
           title={title}
           options={titles}
@@ -159,6 +135,10 @@ class VocabFilter extends Component {
 
 VocabFilter.propTypes = {
   classes: PropTypes.object.isRequired
+}
+
+VocabFilter.defaultProps = {
+  lang: 'de'
 }
 
 export default withStyles(styles)(VocabFilter)

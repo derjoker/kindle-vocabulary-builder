@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
 import { Stitch } from 'mongodb-stitch-browser-sdk'
 import isElectron from 'is-electron'
+import difference from 'lodash/difference'
+import uniq from 'lodash/uniq'
 
 import VocabTable from './VocabTable'
 import VocabFilter from './VocabFilter'
@@ -11,35 +13,36 @@ class Vocabs extends Component {
     super(props)
     this.client = Stitch.defaultAppClient
     this.state = {
-      lang: '',
       vocabs: []
     }
     this.lookup = this.lookup.bind(this)
   }
 
   async lookup () {
-    const { lang, vocabs } = this.state
-    const stems = vocabs.map(vocab => vocab.stem)
-    const MAX = 10
-    for (let offset = 0; offset < stems.length; offset += MAX) {
-      console.log(offset)
-      const _stems = stems.slice(offset, offset + MAX)
-      await this.client.callFunction('insertLinks', [lang, _stems])
-      const links = await this.client.callFunction('nilLinks', [lang, _stems])
-      window.ipcRenderer.send('lookup', links)
-    }
+    const { lang, dict } = this.props
+    const { vocabs } = this.state
+    const stemsInVocabs = uniq(vocabs.map(vocab => vocab.stem))
+    const stemsInWords = await this.client.callFunction('stems', [
+      lang,
+      dict,
+      stemsInVocabs
+    ])
+    const stems = difference(stemsInVocabs, stemsInWords)
+    // console.log(stems)
+    if (stems.length) window.ipcRenderer.send('lookup', lang, dict, stems)
   }
 
   componentDidMount () {
     if (isElectron()) {
-      window.ipcRenderer.on('lookup-links', (_, links) => {
-        console.log(links)
-        this.client.callFunction('updateLinks', [links])
-      })
-
-      window.ipcRenderer.on('lookup-words', (_, words) => {
+      window.ipcRenderer.on('lookup-words', async (_, words) => {
         console.log(words)
-        this.client.callFunction('insertWords', [words])
+        const MAX = 100
+        for (let offset = 0; offset < words.length; offset += MAX) {
+          await this.client.callFunction('insertWords', [
+            words.slice(offset, offset + MAX)
+          ])
+          console.log(offset + MAX)
+        }
       })
     }
   }
@@ -50,19 +53,25 @@ class Vocabs extends Component {
       <div>
         <VocabFilter
           search={condition => {
-            this.client.callFunction('findVocabs', [condition]).then(vocabs => {
+            this.client.callFunction('vocabs', [condition]).then(vocabs => {
               this.setState({
-                lang: condition.lang,
                 vocabs
               })
             })
           }}
         />
-        <Button onClick={this.lookup}>Look Up</Button>
+        {isElectron() &&
+          vocabs.length > 0 &&
+          <Button onClick={this.lookup}>Look Up</Button>}
         <VocabTable data={vocabs} />
       </div>
     )
   }
+}
+
+Vocabs.defaultProps = {
+  lang: 'de',
+  dict: 'duden'
 }
 
 export default Vocabs
