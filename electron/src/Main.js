@@ -17,13 +17,13 @@ import { Stitch } from 'mongodb-stitch-browser-sdk'
 import isElectron from 'is-electron'
 
 import Auth from './containers/Auth'
+import Lists from './containers/Lists'
 import Vocabs from './containers/Vocabs'
 import Kindle from './containers/Kindle'
 import Login from './containers/Login'
 
 const Play = () => <div>Play</div>
 const Search = () => <div>Search</div>
-const Lists = () => <div>Lists</div>
 
 Stitch.initializeDefaultAppClient(process.env.REACT_APP_STITCH_APP_KEY)
 

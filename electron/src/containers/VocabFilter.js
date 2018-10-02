@@ -63,8 +63,8 @@ class VocabFilter extends Component {
   }
 
   render () {
-    const { lang } = this.props
-    const { title, titles } = this.state
+    const { lang, dict } = this.props
+    const { name, title, titles } = this.state
 
     return (
       <form>
@@ -80,7 +80,9 @@ class VocabFilter extends Component {
             })
           }}
         />
-        <Button onClick={this.handleClickOpen}>Create List</Button>
+        <Button disabled={title === ''} onClick={this.handleClickOpen}>
+          Create List
+        </Button>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -107,19 +109,17 @@ class VocabFilter extends Component {
                 Cancel
               </Button>
               <Button
-                onClick={() => {
-                  const { name, lang, title } = this.state
-                  if (name === '') return
-
-                  const list = { name }
-                  if (lang) list.lang = lang
-                  if (title) list.title = title
-
-                  console.log(list)
-
+                disabled={name === ''}
+                onClick={async () => {
                   this.setState({
                     open: false
                   })
+                  const list = { lang, dict, title, name }
+                  console.log(list)
+                  const result = await this.client.callFunction('createList', [
+                    list
+                  ])
+                  console.log(result)
                 }}
                 color='primary'
               >
@@ -138,7 +138,8 @@ VocabFilter.propTypes = {
 }
 
 VocabFilter.defaultProps = {
-  lang: 'de'
+  lang: 'de',
+  dict: 'duden'
 }
 
 export default withStyles(styles)(VocabFilter)
