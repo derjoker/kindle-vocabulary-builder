@@ -18,6 +18,7 @@ import isElectron from 'is-electron'
 
 import Auth from './containers/Auth'
 import Lists from './containers/Lists'
+import Stems from './containers/Stems'
 import Vocabs from './containers/Vocabs'
 import Kindle from './containers/Kindle'
 import Login from './containers/Login'
@@ -152,7 +153,8 @@ class Main extends Component {
           <Route exact path='/' component={Play} />
           <Route path='/play' component={Play} />
           <Route path='/search' component={Search} />
-          <Route path='/lists' component={Lists} />
+          <Route exact path='/lists' component={Lists} />
+          <Route path='/lists/:id' component={Stems} />
           <Route path='/vocabs' component={Vocabs} />
           {isElectron() && <Route path='/kindle' component={Kindle} />}
           <Route path='/login' component={Login} />

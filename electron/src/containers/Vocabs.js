@@ -52,12 +52,21 @@ class Vocabs extends Component {
     return (
       <div>
         <VocabFilter
+          disabled={vocabs.length === 0}
           search={condition => {
             this.client.callFunction('vocabs', [condition]).then(vocabs => {
               this.setState({
                 vocabs
               })
             })
+          }}
+          create={async list => {
+            list.stems = uniq(vocabs.map(vocab => vocab.stem)).map(stem => ({
+              stem
+            }))
+            console.log(list)
+            const result = await this.client.callFunction('createList', [list])
+            console.log(result)
           }}
         />
         {isElectron() &&

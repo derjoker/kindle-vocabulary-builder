@@ -63,7 +63,7 @@ class VocabFilter extends Component {
   }
 
   render () {
-    const { lang, dict } = this.props
+    const { lang, dict, disabled, search, create } = this.props
     const { name, title, titles } = this.state
 
     return (
@@ -73,14 +73,17 @@ class VocabFilter extends Component {
           options={titles}
           change={option => {
             const title = option.value
-            this.props.search({ lang, title })
+            search({ lang, title })
             this.setState({
               title,
               name: title
             })
           }}
         />
-        <Button disabled={title === ''} onClick={this.handleClickOpen}>
+        <Button
+          disabled={disabled || title === ''}
+          onClick={this.handleClickOpen}
+        >
           Create List
         </Button>
         <Dialog
@@ -115,11 +118,7 @@ class VocabFilter extends Component {
                     open: false
                   })
                   const list = { lang, dict, title, name }
-                  console.log(list)
-                  const result = await this.client.callFunction('createList', [
-                    list
-                  ])
-                  console.log(result)
+                  create(list)
                 }}
                 color='primary'
               >
@@ -134,7 +133,9 @@ class VocabFilter extends Component {
 }
 
 VocabFilter.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  search: PropTypes.func,
+  create: PropTypes.func.isRequired
 }
 
 VocabFilter.defaultProps = {
