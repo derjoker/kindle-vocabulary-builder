@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Stitch } from 'mongodb-stitch-browser-sdk'
 import { withStyles } from '@material-ui/core/styles'
-import Avatar from '@material-ui/core/Avatar'
 import Chip from '@material-ui/core/Chip'
+import DoneIcon from '@material-ui/icons/Done'
+import CancelIcon from '@material-ui/icons/Cancel'
 
 const styles = theme => ({
   root: {
@@ -45,15 +46,22 @@ class Stems extends Component {
         {stems.map((stem, index) => (
           <Chip
             key={index}
-            avatar={<Avatar>{stem.stem[0]}</Avatar>}
             label={stem.stem}
             onClick={event => {
               console.log(event)
             }}
-            onDelete={event => {
-              console.log(event)
+            onDelete={() => {
+              stem.status = stem.status === 'delete' ? 'learn' : 'delete'
+              const { id } = this.props.match.params
+              this.client.callFunction('updateListStem', [id, stem])
+              stems[index] = stem
+              this.forceUpdate()
             }}
             className={classes.chip}
+            deleteIcon={
+              stem.status === 'delete' ? <DoneIcon /> : <CancelIcon />
+            }
+            color={stem.status === 'delete' ? 'secondary' : 'primary'}
           />
         ))}
       </div>
