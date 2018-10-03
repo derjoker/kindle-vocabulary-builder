@@ -5,6 +5,8 @@ import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
 import DoneIcon from '@material-ui/icons/Done'
 import CancelIcon from '@material-ui/icons/Cancel'
+import uniq from 'lodash/uniq'
+import difference from 'lodash/difference'
 
 const styles = theme => ({
   root: {
@@ -33,6 +35,29 @@ class Stems extends Component {
       if (list.stems) {
         this.setState({
           stems: list.stems
+        })
+      }
+      if (list.title) {
+        const condition = {
+          lang: list.lang,
+          title: list.title
+        }
+        // console.log(list, condition)
+        this.client.callFunction('vocabs', [condition]).then(vocabs => {
+          console.log(vocabs)
+          const stemsInVocabs = uniq(vocabs.map(vocab => vocab.stem))
+          console.log(stemsInVocabs)
+          const stemsInList = this.state.stems.map(stem => stem.stem)
+          const stems = difference(stemsInVocabs, stemsInList).map(stem => ({
+            stem
+          }))
+          console.log(stems)
+          if (stems.length) {
+            this.client.callFunction('addListStems', [id, stems])
+            this.setState({
+              stems: this.state.stems.concat(stems)
+            })
+          }
         })
       }
     })
