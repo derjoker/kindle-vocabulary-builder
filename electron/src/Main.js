@@ -19,6 +19,7 @@ import isElectron from 'is-electron'
 import Auth from './containers/Auth'
 import Lists from './containers/Lists'
 import Stems from './containers/Stems'
+import Books from './containers/Books'
 import Vocabs from './containers/Vocabs'
 import Kindle from './containers/Kindle'
 import Login from './containers/Login'
@@ -137,6 +138,11 @@ class Main extends Component {
             </ListItem>
           </List>
           <List>
+            <ListItem component={Link} to={'/books'} button>
+              <ListItemText primary='Books' />
+            </ListItem>
+          </List>
+          <List>
             <ListItem component={Link} to={'/vocabs'} button>
               <ListItemText primary='Vocabs' />
             </ListItem>
@@ -155,6 +161,7 @@ class Main extends Component {
           <Route path='/search' component={Search} />
           <Route exact path='/lists' component={Lists} />
           <Route path='/lists/:id' component={Stems} />
+          <Route path='/books' component={Books} />
           <Route path='/vocabs' component={Vocabs} />
           {isElectron() && <Route path='/kindle' component={Kindle} />}
           <Route path='/login' component={Login} />
