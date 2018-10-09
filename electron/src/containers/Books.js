@@ -12,6 +12,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import { withRouter } from 'react-router-dom'
 
 const styles = theme => ({
   root: {
@@ -51,7 +52,7 @@ class Books extends Component {
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, lang, dict, history } = this.props
     const { title, titles } = this.state
     return (
       <div className={classes.root}>
@@ -109,7 +110,17 @@ class Books extends Component {
                 <ListItemText primary={title} />
                 <Button
                   onClick={() => {
-                    console.log('button', title)
+                    this.client
+                      .callFunction('upsertList', [
+                        {
+                          lang,
+                          dict,
+                          title
+                        }
+                      ])
+                      .then(listId => {
+                        history.push(`/lists/${listId}`)
+                      })
                   }}
                 >
                   List
@@ -139,7 +150,8 @@ Books.propTypes = {
 }
 
 Books.defaultProps = {
-  lang: 'de'
+  lang: 'de',
+  dict: 'duden'
 }
 
-export default withStyles(styles)(Books)
+export default withStyles(styles)(withRouter(Books))
