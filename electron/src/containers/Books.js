@@ -14,6 +14,8 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { withRouter } from 'react-router-dom'
 
+import Book from './Book'
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -26,12 +28,23 @@ class Books extends Component {
     super(props)
     this.client = Stitch.defaultAppClient
     this.state = {
+      book: null,
       open: false,
       title: '',
       titles: new Set()
     }
     this.handleClickOpen = this.handleClickOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.closeBookDialog = this.closeBookDialog.bind(this)
+    this.openBookDialog = this.openBookDialog.bind(this)
+  }
+
+  openBookDialog (book) {
+    this.setState({ book: book })
+  }
+
+  closeBookDialog () {
+    this.setState({ book: null })
   }
 
   handleClickOpen () {
@@ -53,9 +66,10 @@ class Books extends Component {
 
   render () {
     const { classes, lang, dict, history } = this.props
-    const { title, titles } = this.state
+    const { book, title, titles } = this.state
     return (
       <div className={classes.root}>
+        {book && <Book lang={lang} title={book} close={this.closeBookDialog} />}
         <Dialog
           fullWidth
           open={this.state.open}
@@ -124,6 +138,13 @@ class Books extends Component {
                   }}
                 >
                   List
+                </Button>
+                <Button
+                  onClick={() => {
+                    this.openBookDialog(title)
+                  }}
+                >
+                  Book
                 </Button>
                 <Button
                   onClick={() => {
