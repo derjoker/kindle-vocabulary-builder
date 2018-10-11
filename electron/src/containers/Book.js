@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 
-import VocabTable from './VocabTable'
+import VocabTableLite from './VocabTableLite'
 
 const styles = {
   appBar: {
@@ -61,6 +61,7 @@ class Book extends React.Component {
       console.log(stemsInWords)
       const stemsToLookup = difference(stems, stemsInWords)
       if (stemsToLookup.length) {
+        console.log(stemsToLookup)
         window.ipcRenderer.send('lookup', lang, dict, stemsToLookup)
       }
     }
@@ -116,7 +117,13 @@ class Book extends React.Component {
         <Button disabled={vocabs.length === 0} onClick={this.build}>
           Build
         </Button>
-        <VocabTable data={vocabs} />
+        <VocabTableLite
+          data={vocabs}
+          save={(_id, vocab) => {
+            console.log(_id, vocab)
+            this.client.callFunction('updateVocab', [_id, vocab])
+          }}
+        />
       </Dialog>
     )
   }

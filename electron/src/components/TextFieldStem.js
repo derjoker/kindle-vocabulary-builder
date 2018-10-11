@@ -34,11 +34,7 @@ class TextFieldStem extends Component {
 
           if (stem === data.stem || (isNull(stem) && isNull(data.stem))) return
 
-          save({
-            id: data.id,
-            build: false,
-            stem
-          })
+          save(data._id, { stem })
         }}
       />
     )
