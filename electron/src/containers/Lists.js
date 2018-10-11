@@ -45,7 +45,7 @@ class Lists extends Component {
               component='a'
               href={`/lists/${list._id}`}
             >
-              <ListItemText primary={list.name} />
+              <ListItemText primary={list.title} />
               <ListItemSecondaryAction>
                 <IconButton
                   aria-label='Delete'

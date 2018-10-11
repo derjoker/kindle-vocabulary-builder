@@ -69,7 +69,13 @@ class Books extends Component {
     const { book, title, titles } = this.state
     return (
       <div className={classes.root}>
-        {book && <Book lang={lang} title={book} close={this.closeBookDialog} />}
+        {book &&
+          <Book
+            lang={lang}
+            dict={dict}
+            title={book}
+            close={this.closeBookDialog}
+          />}
         <Dialog
           fullWidth
           open={this.state.open}

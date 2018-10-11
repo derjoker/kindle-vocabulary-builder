@@ -4,10 +4,6 @@ import { Stitch } from 'mongodb-stitch-browser-sdk'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
-import DoneIcon from '@material-ui/icons/Done'
-import CancelIcon from '@material-ui/icons/Cancel'
-import uniq from 'lodash/uniq'
-import difference from 'lodash/difference'
 import flattenDepth from 'lodash/flattenDepth'
 import stringify from 'csv-stringify'
 
@@ -48,22 +44,11 @@ class Stems extends Component {
           title: list.title
         }
         // console.log(list, condition)
-        this.client.callFunction('vocabs', [condition]).then(vocabs => {
-          console.log(vocabs)
-          const stemsInVocabs = uniq(vocabs.map(vocab => vocab.stem))
-          console.log(stemsInVocabs)
-          const stemsInList = this.state.stems.map(stem => stem.stem)
-          const stems = difference(stemsInVocabs, stemsInList).map(stem => ({
-            stem
-          }))
-          console.log(stems)
-          if (stems.length) {
-            this.client.callFunction('addListStems', [id, stems])
-            this.setState({
-              stems: this.state.stems.concat(stems)
-            })
-          }
-        })
+        this.client
+          .callFunction('getStems', ['vocabs', [], condition])
+          .then(stems => {
+            console.log(stems)
+          })
       }
     })
   }
@@ -78,13 +63,7 @@ class Stems extends Component {
             disabled={!stems.length}
             onClick={() => {
               this.client
-                .callFunction('words', [
-                  list.lang,
-                  list.dict,
-                  stems
-                    .filter(stem => stem.status !== 'delete')
-                    .map(stem => stem.stem)
-                ])
+                .callFunction('words', [list.lang, list.dict, stems])
                 .then(words => {
                   console.log(words)
                   const cards = flattenDepth(
@@ -125,22 +104,15 @@ class Stems extends Component {
           {stems.map((stem, index) => (
             <Chip
               key={index}
-              label={stem.stem}
+              label={stem}
               onClick={event => {
                 console.log(event)
               }}
-              onDelete={() => {
-                stem.status = stem.status === 'delete' ? 'learn' : 'delete'
-                const { id } = this.props.match.params
-                this.client.callFunction('updateListStem', [id, stem])
-                stems[index] = stem
-                this.forceUpdate()
+              onDelete={event => {
+                console.log(event)
               }}
               className={classes.chip}
-              deleteIcon={
-                stem.status === 'delete' ? <DoneIcon /> : <CancelIcon />
-              }
-              color={stem.status === 'delete' ? 'secondary' : 'primary'}
+              color='primary'
             />
           ))}
         </div>
