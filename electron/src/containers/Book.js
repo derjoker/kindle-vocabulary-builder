@@ -4,6 +4,8 @@ import { Stitch } from 'mongodb-stitch-browser-sdk'
 import isElectron from 'is-electron'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
+import Fade from '@material-ui/core/Fade'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Dialog from '@material-ui/core/Dialog'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -34,7 +36,8 @@ class Book extends React.Component {
     super(props)
     this.client = Stitch.defaultAppClient
     this.state = {
-      vocabs: []
+      vocabs: [],
+      building: false
     }
     this.build = this.build.bind(this)
   }
@@ -61,6 +64,7 @@ class Book extends React.Component {
       console.log(stemsInWords)
       const stemsToLookup = difference(stems, stemsInWords)
       if (stemsToLookup.length) {
+        this.setState({ building: true })
         console.log(stemsToLookup)
         window.ipcRenderer.send('lookup', lang, dict, stemsToLookup)
       }
@@ -89,6 +93,9 @@ class Book extends React.Component {
             words.slice(offset, offset + MAX)
           ])
           console.log(offset + MAX)
+          if (offset + MAX >= words.length) {
+            this.setState({ building: false })
+          }
         }
         // TODO: copy words to notes & add list_id
       })
@@ -97,7 +104,7 @@ class Book extends React.Component {
 
   render () {
     const { classes, title, close } = this.props
-    const { vocabs } = this.state
+    const { vocabs, building } = this.state
     return (
       <Dialog open fullScreen onClose={close} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
@@ -117,6 +124,15 @@ class Book extends React.Component {
         <Button disabled={vocabs.length === 0} onClick={this.build}>
           Build
         </Button>
+        <Fade
+          in={building}
+          style={{
+            transitionDelay: building ? '800ms' : '0ms'
+          }}
+          unmountOnExit
+        >
+          <CircularProgress />
+        </Fade>
         <VocabTableLite
           data={vocabs}
           save={(_id, vocab) => {
