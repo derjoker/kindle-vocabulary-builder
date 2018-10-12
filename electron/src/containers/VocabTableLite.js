@@ -7,10 +7,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Paper,
-  IconButton
+  Paper
 } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
 
 import TextFieldStem from '../components/TextFieldStem'
 
@@ -40,7 +38,6 @@ class VocabTable extends Component {
             <TableRow>
               <TableCell>Usage</TableCell>
               <TableCell>Stem</TableCell>
-              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -52,14 +49,6 @@ class VocabTable extends Component {
                   </TableCell>
                   <TableCell>
                     <TextFieldStem data={vocab} save={save} />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => console.log('delete')}
-                      aria-label='Delete'
-                    >
-                      <DeleteIcon />
-                    </IconButton>
                   </TableCell>
                 </TableRow>
               )
